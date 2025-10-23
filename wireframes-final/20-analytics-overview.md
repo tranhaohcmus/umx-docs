@@ -7,8 +7,17 @@
 │ 9:41  Báo cáo & Phân tích   📤  │
 ├─────────────────────────────────┤
 │                                 │
-│  📊 Tổng quan Tháng 10          │
-│  [◀ T9] [Tháng 10/2025] [T11 ▶]│
+│  📊 Tổng quan                   │
+│  ┌───────────────────────────┐ │
+│  │ [Tuần này ▼]              │ │ Date range selector
+│  └───────────────────────────┘ │
+│                                 │
+│  Dropdown options:             │
+│  • Tuần này (21-27/10)         │
+│  • Tháng này (1-31/10)         │
+│  • 3 tháng gần đây             │
+│  • 6 tháng gần đây             │
+│  • Tùy chọn (chọn ngày)        │
 │                                 │
 │  ┌──────┬──────┬──────┬──────┐│
 │  │  89% │  24  │  18  │  8   ││
@@ -82,8 +91,17 @@ Tổng quan báo cáo phân tích:
 
 ### Month Selector
 
-- Previous/Next arrows
-- Current month display
+### Date Range Selector
+
+- **[Tuần này ▼]**: Dropdown selector (prominent placement at top)
+- **Preset ranges**:
+  - Tuần này (Current week with dates)
+  - Tháng này (Current month)
+  - 3 tháng gần đây (Last 3 months)
+  - 6 tháng gần đây (Last 6 months)
+  - Tùy chọn (Custom date picker)
+- Shows selected range in format: "21-27/10" or "Tháng 10/2025"
+- All data and charts update when range changes
 
 ### Summary Stats
 

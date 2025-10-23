@@ -23,7 +23,7 @@
 │  │ 🔍 Tìm kiếm...            │ │ Search bar
 │  └───────────────────────────┘ │
 │                                 │
-│  [🏷️ Tất cả] [🟢 Đang học] [⏸️ Tạm dừng]│
+│  [🏷️ Tất cả (5)] [🟢 Đang học (4)] [⏸️ Tạm dừng (1)]│
 │                                 │
 │  ┌───────────────────────────┐ │
 │  │ ┌─────────┐               │ │
@@ -31,11 +31,7 @@
 │  │ └─────────┘  5 tuổi • Nam │ │ 60x60
 │  │                           │ │
 │  │ 🎯 Tuần này: 3 buổi       │ │
-│  │ ✅ Đã ghi: 2 • ⏰ Chưa: 1 │ │
-│  │                           │ │
-│  │ ┌────────────────────┐    │ │
-│  │ │██████░░░░ 67%      │    │ │ Progress
-│  │ └────────────────────┘    │ │
+│  │ ✅ 2/3 buổi đã ghi        │ │
 │  │                           │ │
 │  │ [XEM CHI TIẾT →]          │ │
 │  └───────────────────────────┘ │
@@ -46,11 +42,7 @@
 │  │ └─────────┘  4 tuổi • Nữ  │ │
 │  │                           │ │
 │  │ 🎯 Tuần này: 4 buổi       │ │
-│  │ ✅ Đã ghi: 4 • ✨ 100%    │ │
-│  │                           │ │
-│  │ ┌────────────────────┐    │ │
-│  │ │████████████ 100%   │    │ │
-│  │ └────────────────────┘    │ │
+│  │ ✅ 4/4 buổi đã ghi ✨     │ │
 │  │                           │ │
 │  │ [XEM CHI TIẾT →]          │ │
 │  └───────────────────────────┘ │
@@ -61,11 +53,7 @@
 │  │ └─────────┘  6 tuổi • Nam │ │
 │  │                           │ │
 │  │ 🎯 Tuần này: 2 buổi       │ │
-│  │ ⚠️ Chưa ghi: 2 buổi       │ │
-│  │                           │ │
-│  │ ┌────────────────────┐    │ │
-│  │ │░░░░░░░░░░ 0%       │    │ │
-│  │ └────────────────────┘    │ │
+│  │ ⚠️ 0/2 buổi đã ghi        │ │
 │  │                           │ │
 │  │ [BẮT ĐẦU GHI →]           │ │
 │  └───────────────────────────┘ │
@@ -115,9 +103,9 @@ Dashboard là màn hình chính sau khi đăng nhập, cung cấp tổng quan nh
 
 - **Search bar**: "🔍 Tìm kiếm..."
 - **Filter tabs**:
-  - 🏷️ Tất cả (All)
-  - 🟢 Đang học (Active)
-  - ⏸️ Tạm dừng (Paused)
+  - 🏷️ Tất cả (5) - Show all students
+  - 🟢 Đang học (4) - Active students
+  - ⏸️ Tạm dừng (1) - Paused students
 
 ### Student Card (Repeatable)
 
@@ -125,11 +113,10 @@ Dashboard là màn hình chính sau khi đăng nhập, cung cấp tổng quan nh
 - **Name**: "Bé An"
 - **Info**: Age (5 tuổi), Gender (Nam/Nữ)
 - **Week stats**: "Tuần này: 3 buổi"
-- **Status**:
-  - ✅ Đã ghi: 2 (Completed)
-  - ⏰ Chưa ghi: 1 (Pending)
-- **Progress bar**: Visual completion percentage
+- **Completion**: "✅ 2/3 buổi đã ghi" or "⚠️ 0/2 buổi đã ghi"
 - **CTA button**: "XEM CHI TIẾT →" or "BẮT ĐẦU GHI →"
+
+**Note:** Progress bars removed - replaced with simple "X/Y buổi đã ghi" text for clarity
 
 ### Bottom Navigation
 
@@ -165,9 +152,10 @@ Dashboard là màn hình chính sau khi đăng nhập, cung cấp tổng quan nh
 ## Validation Rules
 
 - Must have at least 1 student to show list
-- Progress bars calculated from completed sessions
+- Completion text calculated from sessions: "X/Y buổi đã ghi"
 - Quick stats update in real-time
-- Filter tabs show count badges
+- Filter tabs show count badges in parentheses
+- Show ✨ sparkle when 100% complete
 
 ## Notes
 
@@ -176,3 +164,5 @@ Dashboard là màn hình chính sau khi đăng nhập, cung cấp tổng quan nh
 - **Badge notifications**: Show unread counts on bottom nav
 - **Accessibility**: VoiceOver support for all interactive elements
 - **Performance**: List virtualization for 100+ students
+- **Empty state improvement**: When "Cần ghi: 0", show "✨ Tất cả đã hoàn thành!" with green background
+- **Progress visualization**: Removed progress bars for simplicity - just show "X/Y buổi" text

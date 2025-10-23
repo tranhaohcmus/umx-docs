@@ -9,12 +9,19 @@
 │                                 │
 │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
 │  Bước 2/4: Thái độ Học tập     │
+│  ████████████████░░░░░░ 50%   │
 │                                 │
 │  😊 Tâm trạng chung             │
 │                                 │
 │  ┌───────────────────────────┐ │
-│  │   😊   😐   😕   😢   😡  │ │ Emoji selector
-│  │   ●    ○    ○    ○    ○   │ │
+│  │   😢       😟      😐     │ │
+│  │   ○        ○       ○       │ │
+│  │ Rất khó  Khó    Bình       │ │
+│  │  khăn   khăn   thường      │ │
+│  │                            │ │
+│  │   🙂       😊              │ │
+│  │   ●        ○               │ │
+│  │  Tốt    Rất tốt            │ │
 │  └───────────────────────────┘ │
 │                                 │
 │  🤝 Mức độ hợp tác              │
@@ -60,9 +67,15 @@ Bước 2/4 - Đánh giá thái độ học tập TỔNG QUAN của học sinh t
 
 ### Mood Selector
 
-- 5 emoji options
+- **5 emoji options with text labels**:
+  - 😢 **Rất khó khăn** (Very difficult)
+  - 😟 **Khó khăn** (Difficult)
+  - 😐 **Bình thường** (Normal)
+  - 🙂 **Tốt** (Good)
+  - 😊 **Rất tốt** (Very good)
 - Single selection
-- Emojis: 😊 😐 😕 😢 😡
+- Text labels below emojis for clarity
+- Arranged in 2 rows for better visibility
 
 ### Sliders (3)
 

@@ -30,8 +30,9 @@
 │  💡 Mẹo: AI có thể phân tích    │
 │  nhiều tuần giáo án cùng lúc   │
 │                                 │
-│                                 │
-│  [Hủy phân tích]               │
+│  ┌───────────────────────────┐ │
+│  │  ❌ HỦY PHÂN TÍCH          │ │ Secondary button
+│  └───────────────────────────┘ │
 │                                 │
 ├─────────────────────────────────┤
 │ [🏠] [📝 Ghi] [📊 Báo] [👤 Tôi]│
@@ -70,12 +71,17 @@ Hiển thị tiến trình AI phân tích giáo án.
 
 ### Cancel Button
 
-- Allow cancellation
+- **[❌ HỦY PHÂN TÍCH]**: Stop AI processing
+- Shows confirmation: "Bạn có chắc muốn hủy? Tiến độ sẽ bị mất."
+- User has control to cancel long-running operations
 
 ## Interactions
 
 - **Auto-advance**: Moves to preview when complete
-- **Tap Hủy**: Confirm cancellation
+- **Tap [❌ HỦY]**: Show confirmation dialog
+  - "Bạn có chắc muốn hủy? Tiến độ sẽ bị mất."
+  - Options: [Tiếp tục phân tích] [Hủy bỏ]
+- **Confirm cancel**: Return to upload screen
 - **Error**: Show error state with retry option
 
 ## States

@@ -8,7 +8,8 @@
 ├─────────────────────────────────┤
 │                                 │
 │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
-│  4/4: Ghi nhận Hành vi         │
+│  Bước 4/4: Ghi nhận Hành vi    │
+│  ████████████████████████ 100% │
 │                                 │
 │  ⚠️ Đã ghi nhận: 1 hành vi      │
 │                                 │
@@ -27,6 +28,12 @@
 │  ┌───────────────────────────┐ │
 │  │ ➕ THÊM HÀNH VI MỚI        │ │ Secondary CTA
 │  └───────────────────────────┘ │
+│                                 │
+│  📚 Thư viện hành vi phổ biến: │
+│  [😤 Cáu giận] [🗣️ La hét]     │
+│  [🤲 Đập tay] [🏃 Rời chỗ]     │
+│  [😢 Khóc] [🙅 Từ chối]        │
+│  [➕ Thêm hành vi khác...]     │
 │                                 │
 │  💡 Không có hành vi đặc biệt? │
 │  Bạn có thể bỏ qua bước này    │
@@ -69,7 +76,17 @@ Each behavior shows:
 
 ### Add Behavior Button
 
-- Opens bottom sheet
+- **[➕ THÊM HÀNH VI MỚI]**: Opens ABC bottom sheet
+- **Common behavior quick tags**:
+  - 😤 Cáu giận (Angry)
+  - 🗣️ La hét (Screaming)
+  - 🤲 Đập tay (Hand flapping)
+  - 🏃 Rời chỗ (Leaving seat)
+  - 😢 Khóc (Crying)
+  - 🙅 Từ chối (Refusing)
+  - **[➕ Thêm hành vi khác...]**: Custom behavior entry
+- One-tap to select common behaviors, auto-fills behavior name
+- Or create custom behavior with full A-B-C details
 
 ### Complete Button
 
@@ -81,8 +98,10 @@ Each behavior shows:
 - **Tap behavior card** = View detail
 - **Tap Sửa** = Edit behavior
 - **Tap Xóa** = Delete (with confirmation)
-- **Tap THÊM** = Open ABC bottom sheet
-- **Tap HOÀN TẤT** = Save and complete
+- **Tap THÊM HÀNH VI MỚI** = Open ABC bottom sheet
+- **Tap common behavior tag** = Quick add with pre-filled behavior name
+- **Tap [➕ Thêm hành vi khác...]** = Custom behavior entry
+- **Tap HOÀN TẤT** = Save and complete logging session
 
 ## Validation
 

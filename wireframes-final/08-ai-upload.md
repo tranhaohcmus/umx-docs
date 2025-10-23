@@ -12,7 +12,9 @@
 │  ┌───────────────────────────┐ │
 │  │         📄                │ │
 │  │                           │ │
-│  │   [📱 Chọn file từ thiết bị]│ │
+│  │  [📷 Chụp ảnh trực tiếp]  │ │ Camera
+│  │                           │ │
+│  │  [📱 Chọn từ thư viện]    │ │ Gallery
 │  │                           │ │
 │  │   ✓ PDF, DOCX, TXT, JPG   │ │
 │  │   ⚠️ Tối đa 10MB          │ │
@@ -55,8 +57,9 @@ Upload giáo án qua file hoặc text để AI phân tích và tạo buổi họ
 
 ### File Upload
 
-- File picker button
-- Supported formats: PDF, DOCX, TXT, JPG
+- **[📷 Chụp ảnh trực tiếp]**: Open camera to capture document photo
+- **[📱 Chọn từ thư viện]**: Open device file picker/gallery
+- Supported formats: PDF, DOCX, TXT, JPG, PNG
 - Max size: 10MB
 
 ### Text Input
@@ -75,7 +78,8 @@ Upload giáo án qua file hoặc text để AI phân tích và tạo buổi họ
 
 ## Interactions
 
-- **Tap file picker** = Open device file picker
+- **Tap [📷 Chụp ảnh]** = Open camera with document capture mode
+- **Tap [📱 Chọn từ thư viện]** = Open file picker/gallery
 - **Paste text** = Enable analyze button
 - **Tap PHÂN TÍCH** = Upload and process
 
