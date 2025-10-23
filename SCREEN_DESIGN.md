@@ -40,7 +40,7 @@
 │  ┌─────────────────────────────────┐   │
 │  │  ┌────┐                         │   │
 │  │  │ BA │ Bé An (Nguyễn Văn An)  │   │
-│  │  └────┘ 5 tuổi • Tự kỷ        │   │
+│  │  └────┘ 5 tuổi                 │   │
 │  │                                 │   │
 │  │  [📝 Ghi Nhật ký]  [📈 Phân tích]│   │
 │  └─────────────────────────────────┘   │
@@ -48,7 +48,7 @@
 │  ┌─────────────────────────────────┐   │
 │  │  ┌────┐                         │   │
 │  │  │ BB │ Bé Bình (Trần Thị Bình)│   │
-│  │  └────┘ 4 tuổi • Chậm PT       │   │
+│  │  └────┘ 4 tuổi                 │   │
 │  │                                 │   │
 │  │  [📝 Ghi Nhật ký]  [📈 Phân tích]│   │
 │  └─────────────────────────────────┘   │
@@ -60,7 +60,7 @@
 │  └─────────────────────────────────┘   │
 │                                         │
 ├─────────────────────────────────────────┤
-│  [🏠 Trang chủ] [📖 Từ điển] [⚙️ Cài đặt]│ Bottom Nav
+│  [🏠 Trang chủ] [📖 Từ điển] [👤 Profile]│ Bottom Nav
 └─────────────────────────────────────────┘
 ```
 
@@ -91,7 +91,6 @@
   - Border màu theo trạng thái (xanh: đã ghi, xám: chưa ghi)
 - Tên đầy đủ và tên thường gọi
 - Tuổi
-- Chẩn đoán/Tình trạng
 
 **Hành động**:
 
@@ -107,7 +106,7 @@
 
 - **🏠 Trang chủ**: Dashboard (active)
 - **📖 Từ điển**: Màn hình Từ điển Hành vi
-- **⚙️ Cài đặt**: Settings
+- **👤 Profile**: Màn hình Profile/Settings
 
 ### Tương tác
 
@@ -121,7 +120,7 @@
 
 ---
 
-## 2. Danh sách Buổi học (Session List)
+## 2. Chọn Buổi học (Session List)
 
 ### Mục đích
 
@@ -138,11 +137,12 @@
 ├─────────────────────────────────────────┤
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │     📅 Mini Calendar            │   │
-│  │  MO TU WE TH FR SA SU          │   │
-│  │              16 17 18 19 20     │   │
-│  │  21 22 23 24 25 26 27          │   │
-│  │  28 29 30 31                   │   │
+│  │  📅 Tuần 42, Tháng 10/2025  ◀ ▶│   │
+│  │  ───────────────────────────── │   │
+│  │  MO  TU  WE  TH  FR  SA  SU   │   │
+│  │  21● 22● 23○ 24○ 25⚠ 26  27  │   │
+│  │                                 │   │
+│  │  ← Swipe để xem tuần khác →    │   │
 │  │                                 │   │
 │  │  • = Đã ghi  ○ = Chưa ghi      │   │
 │  │  ⚠ = Quá hạn                   │   │
@@ -196,14 +196,20 @@
   - 📅 Date Picker: Mở date picker native để nhảy đến ngày cụ thể
   - ➕ Tạo buổi học mới
 
-#### 2.2. Mini Calendar
+#### 2.2. Mini Calendar (Weekly View)
 
-- **Hiển thị**: Calendar tháng hiện tại
-- **Indicators**:
-  - • (chấm xanh): Ngày có buổi học đã hoàn thành
-  - ○ (chấm xám): Ngày có buổi học chưa ghi
-  - ⚠ (chấm đỏ): Ngày có buổi học quá hạn chưa ghi
-  - Highlight: Ngày được chọn (viền đậm)
+- **Hiển thị**: Calendar theo **tuần** (7 ngày)
+- **Header**: "Tuần [số tuần], Tháng [tháng/năm]"
+- **Navigation**:
+  - Buttons ◀ ▶ để chuyển tuần trước/sau
+  - **Swipe gesture**: Swipe trái → tuần sau, Swipe phải → tuần trước
+- **Indicators** (trên mỗi ngày có lịch học):
+  - **●** (chấm xanh đậm): Ngày có buổi học đã hoàn thành
+  - **○** (chấm xám): Ngày có buổi học chưa ghi
+  - **⚠** (chấm đỏ/cam): Ngày có buổi học quá hạn chưa ghi
+  - Không có chấm: Ngày không có lịch học
+- **Highlight**: Ngày được chọn (background màu xanh nhạt, viền đậm)
+- **Tap action**: Tap vào ngày → Scroll list xuống buổi học của ngày đó
 - **Interaction**: Tap ngày → Scroll xuống hoặc lọc danh sách buổi học của ngày đó
 
 #### 2.3. Session Card (Thẻ buổi học)
@@ -442,6 +448,10 @@
 | Hành động                        | Kết quả                                                    |
 | -------------------------------- | ---------------------------------------------------------- |
 | Tap Mini Calendar date           | Scroll/filter đến buổi học của ngày đó                     |
+| **Swipe Mini Calendar trái**     | **Load tuần tiếp theo (next week)**                        |
+| **Swipe Mini Calendar phải**     | **Load tuần trước (previous week)**                        |
+| **Tap ◀ button (calendar)**      | **Chuyển về tuần trước**                                   |
+| **Tap ▶ button (calendar)**      | **Chuyển sang tuần sau**                                   |
 | Tap Session Card (đã hoàn thành) | Navigate → Nhật ký Buổi học (read-only, có thể edit)       |
 | Tap Session Card (đang ghi)      | Navigate → Nhật ký Buổi học (continue editing)             |
 | Tap Session Card (chưa ghi)      | Navigate → Nhật ký Buổi học (start new)                    |
@@ -481,13 +491,19 @@
 
 ### Data Display Logic
 
-- **Mặc định**: Hiển thị buổi học từ 7 ngày trước đến 7 ngày sau (tuần này + tuần trước một phần)
-- **Grouping**: Group theo ngày, sort theo thứ tự thời gian (gần nhất lên đầu)
-- **Filter**: Có thể filter theo:
-  - Tuần này
-  - Tháng này
-  - Tất cả
-- **Empty State**: "Chưa có buổi học nào. Nhấn ➕ để tạo buổi học mới"
+- **Mini Calendar Mode**: **Weekly View** (hiển thị theo tuần)
+  - **Default**: Hiển thị tuần hiện tại (Monday - Sunday)
+  - **Week calculation**: Tính tuần theo ISO 8601 (tuần bắt đầu từ Thứ Hai)
+  - **Navigation**: Swipe hoặc tap ◀▶ để load tuần trước/sau
+  - **Highlight dates**: Chỉ highlight ngày có lịch học (●○⚠)
+  - **Performance**: Lazy load sessions khi chuyển tuần
+- **Session List Display**:
+  - **Mặc định**: Hiển thị buổi học của **tuần đang xem trong calendar**
+  - **Grouping**: Group theo ngày, sort theo thời gian (mới nhất lên đầu)
+  - **Auto-scroll**: Khi tap vào date trong calendar → scroll đến section của ngày đó
+- **Empty State**:
+  - Nếu tuần không có buổi học: "Tuần này chưa có buổi học. Nhấn ➕ để tạo."
+  - Khi swipe sang tuần khác trống: Hiển thị empty state tương ứng
 
 ---
 
