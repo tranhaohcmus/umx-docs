@@ -56,7 +56,7 @@
 │  │ ✅ TẠO 12 BUỔI HỌC (12)   │ │ Primary CTA
 │  └───────────────────────────┘ │
 │                                 │
-│  [Sửa hàng loạt] [Chọn lại]    │
+│  [Xóa hàng loạt] [Hủy]    │
 │                                 │
 ├─────────────────────────────────┤
 │ [🏠] [📝 Ghi] [📊 Báo] [👤 Tôi]│
@@ -83,8 +83,7 @@ Preview AI-generated sessions với khả năng:
 ### Bulk Actions
 
 - Select all/Deselect all
-- Edit multiple
-- Reselect criteria
+- Cancel
 
 ### Session Cards
 
