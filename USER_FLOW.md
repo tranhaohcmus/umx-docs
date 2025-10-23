@@ -81,7 +81,29 @@ flowchart TD
     Start1[Dashboard] --> SelectStudent[Chọn học sinh: Bé An]
     SelectStudent --> ClickLog[Nhấn nút 📝 Ghi Nhật ký]
 
-    ClickLog --> SessionScreen[Màn hình: Nhật ký Buổi học]
+    ClickLog --> SessionList[Màn hình: Danh sách Buổi học]
+    SessionList --> CreateBtn[Nhấn: ➕ Tạo buổi học mới]
+
+    CreateBtn --> ChooseMethod{Modal: Chọn<br/>phương thức}
+
+    ChooseMethod --> |✍️ Tạo thủ công| ManualModal[Manual Creation Modal]
+    ManualModal --> FillManual[Điền: Ngày, Buổi, Nội dung]
+    FillManual --> CreateManual[Tạo buổi học]
+    CreateManual --> SessionScreen[Màn hình: Nhật ký Buổi học]
+
+    ChooseMethod --> |🤖 Tạo với AI| AIUpload[AI Upload Screen]
+    AIUpload --> UploadFile[Upload file/Dán text]
+    UploadFile --> AIProcess[AI Processing: Phân tích ~30s]
+    AIProcess --> AIPreview[AI Preview: Danh sách buổi học]
+    AIPreview --> EditAI{Chỉnh sửa?}
+    EditAI --> |Có| EditModal[Modal: Edit Individual Session]
+    EditModal --> AIPreview
+    EditAI --> |Không| BulkCreate[Bulk Create: Tạo tất cả]
+    BulkCreate --> BackToList2[Quay về Danh sách Buổi học]
+
+    SessionList --> SelectSession[Chọn buổi học từ danh sách]
+    SelectSession --> SessionScreen
+
     SessionScreen --> ShowContents[Hiển thị nội dung đã lên kế hoạch]
     ShowContents --> Content1[Nội dung 1: Phân biệt màu]
     ShowContents --> Content2[Nội dung 2: ...]
@@ -120,6 +142,10 @@ flowchart TD
 
     style ABCPopup fill:#fff4e1
     style SaveSession fill:#d4edda
+    style AIUpload fill:#e3f2fd
+    style AIProcess fill:#e3f2fd
+    style AIPreview fill:#e3f2fd
+    style BulkCreate fill:#c8e6c9
 ```
 
 ### Chi tiết Các Bước
@@ -149,11 +175,86 @@ flowchart TD
 - Tap vào Mini Calendar → Chọn ngày → Hiển thị buổi học của ngày đó
 - Tap vào buổi học **đã hoàn thành** → Xem chi tiết (read-only) hoặc chỉnh sửa
 - Tap vào buổi học **chưa ghi/đang ghi** → Tiếp tục ghi nhật ký
-- Tap "➕ Tạo buổi học mới" → Modal tạo buổi học mới với:
-  - Ngày: [Ngày đã chọn từ calendar]
-  - Buổi: Sáng/Chiều
-  - Thời gian: 8:00-11:00 (có thể điều chỉnh)
-  - Nội dung dạy học: [Danh sách nội dung đã lên kế hoạch]
+- Tap "➕ Tạo buổi học mới" → **Modal chọn phương thức**:
+  - **Tùy chọn 1: ✍️ Tạo thủ công** → Manual Creation Modal:
+    - Ngày: [Ngày đã chọn từ calendar]
+    - Buổi: Sáng/Chiều
+    - Thời gian: 8:00-11:00 (có thể điều chỉnh)
+    - Nội dung dạy học: [+ Thêm nội dung]
+  - **Tùy chọn 2: 🤖 Tạo với AI** → Chuyển sang **AI Creation Flow** (xem chi tiết ở **Bước 2b**)
+    - Upload file bài giảng hoặc dán text
+    - AI phân tích và trích xuất nội dung
+    - Preview danh sách buổi học
+    - Chỉnh sửa và tạo hàng loạt
+
+#### Bước 2b: AI Creation Flow (Tạo buổi học với AI) - MỚI 🤖
+
+**Điều kiện**: Giáo viên chọn "🤖 Tạo với AI" từ Modal chọn phương thức
+
+**Sub-step 1: Upload File/Dán Text**
+
+- **Màn hình**: AI Upload Screen
+- **Hiển thị**:
+  - Drag & Drop zone với icon file lớn
+  - Button "📂 Chọn file" (hỗ trợ PDF, DOCX, TXT, JPG/PNG)
+  - Hoặc: Text area để dán nội dung bài giảng
+  - Example hint: "Ví dụ: Thứ 2: Hoạt động 1..."
+  - Preview file đã chọn (tên, kích thước, loại)
+
+**Các hành động**:
+
+- Drag file vào zone hoặc Tap "Chọn file" → Chọn file từ thiết bị
+- Paste text vào text area
+- Tap "📤 Upload và Phân tích" → Chuyển sang Sub-step 2
+
+**Sub-step 2: AI Processing (Đang phân tích)**
+
+- **Màn hình**: AI Processing Screen
+- **Hiển thị**:
+  - Loading spinner hoặc progress bar
+  - Animation "🤖 AI đang phân tích..."
+  - Step-by-step status:
+    - ✅ Đọc file thành công
+    - 🔄 Trích xuất cấu trúc bài học
+    - ⏳ Phân tích nội dung và mục tiêu
+    - ⏳ Tạo danh sách buổi học
+  - Thời gian ước tính: ~30 giây
+
+**Sub-step 3: Preview & Edit (Xem trước kết quả)**
+
+- **Màn hình**: AI Preview Screen
+- **Hiển thị**:
+  - Header: "✨ AI đã tạo **12 buổi học** cho bạn"
+  - **Danh sách buổi học** (expandable cards):
+    - **Thứ 2, 22/10** • Buổi sáng • 8:00-11:00
+      - Nội dung 1: Ai đây? (Nhận biết bản thân)
+      - Nội dung 2: Hoạt động vận động (Phát triển vận động thô)
+      - [Expand để xem chi tiết]
+    - **Thứ 3, 23/10** • Buổi sáng • 8:00-11:00
+      - ...
+  - Mỗi card có button: "✏️ Sửa" và "🗑️ Xóa"
+  - Bottom bar:
+    - "✏️ Chỉnh sửa tất cả" (batch edit mode)
+    - "✅ Tạo tất cả (12 buổi)"
+
+**Các hành động**:
+
+- Tap "✏️" trên một buổi học → Modal Edit Individual Session:
+  - Cho phép sửa: Ngày, Buổi, Thời gian, Nội dung
+  - "💾 Lưu" hoặc "❌ Hủy"
+- Tap "🗑️" → Xóa buổi học khỏi danh sách
+- Tap "✅ Tạo tất cả" → Bulk create và chuyển về Session List (hiển thị các buổi học mới tạo)
+
+**Sub-step 4: Hoàn tất (Bulk Creation Success)**
+
+- **Kết quả**: Tất cả buổi học được tạo trong database
+- **Màn hình**: Quay về Session List
+- **Hiển thị**:
+  - Toast notification: "✅ Đã tạo 12 buổi học thành công!"
+  - Danh sách buổi học cập nhật với các buổi mới (trạng thái: "Chưa ghi")
+  - Các buổi mới được highlight (border màu xanh) trong 3 giây
+
+---
 
 #### Bước 3: Mở Nhật ký Buổi học (với ngày đã xác định)
 

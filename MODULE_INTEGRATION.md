@@ -34,6 +34,9 @@ flowchart TB
         ABCService[ABC Service]
         BehaviorService[Behavior Service]
         AnalyticsService[Analytics Service]
+        AILessonService[🤖 AI Lesson Service]
+        FileUploadService[📂 File Upload Service]
+        BulkCreationService[⚡ Bulk Creation Service]
     end
 
     subgraph DL["Data Layer"]
@@ -123,7 +126,10 @@ Module 1: SessionLogModule
 ├── Services/
 │   ├── SessionService.ts              # API calls
 │   ├── ContentService.ts
-│   └── ABCService.ts
+│   ├── ABCService.ts
+│   ├── AILessonService.ts             # 🤖 AI lesson analysis
+│   ├── FileUploadService.ts           # 📂 File handling & OCR
+│   └── BulkCreationService.ts         # ⚡ Bulk session creation
 │
 └── Types/
     ├── session.types.ts
@@ -958,6 +964,579 @@ export class ConflictResolver {
     }
   }
 }
+```
+
+---
+
+## 🤖 AI Services (MỚI)
+
+### AI Service Architecture
+
+```mermaid
+flowchart TB
+    subgraph UI["UI Components"]
+        UploadScreen[AI Upload Screen]
+        ProcessScreen[AI Processing Screen]
+        PreviewScreen[AI Preview Screen]
+    end
+
+    subgraph Services["AI Service Layer"]
+        FileService[FileUploadService]
+        AIService[AILessonService]
+        BulkService[BulkCreationService]
+    end
+
+    subgraph External["External APIs"]
+        OCR[OCR API<br/>Tesseract/Cloud Vision]
+        AI_API[AI Analysis API<br/>OpenAI/Custom Model]
+    end
+
+    subgraph Data["Data Layer"]
+        AnalysisLog[(ai_analysis_log)]
+        Templates[(lesson_template)]
+        BulkLog[(bulk_session_creation)]
+    end
+
+    UploadScreen --> FileService
+    FileService --> OCR
+    FileService --> AIService
+
+    ProcessScreen --> AIService
+    AIService --> AI_API
+    AIService --> AnalysisLog
+    AIService --> Templates
+
+    PreviewScreen --> BulkService
+    BulkService --> BulkLog
+    BulkService --> SessionDB[(session)]
+
+    style Services fill:#e3f2fd
+    style External fill:#fff9c4
+    style Data fill:#c8e6c9
+```
+
+### 1. FileUploadService
+
+Xử lý upload file và trích xuất text.
+
+```typescript
+// services/FileUploadService.ts
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
+import Tesseract from "tesseract.js";
+
+export class FileUploadService {
+  /**
+   * Pick file từ device
+   */
+  static async pickFile(): Promise<UploadedFile> {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/plain",
+        "image/*",
+      ],
+      copyToCacheDirectory: true,
+    });
+
+    if (result.type === "success") {
+      const fileInfo = await FileSystem.getInfoAsync(result.uri);
+
+      return {
+        uri: result.uri,
+        name: result.name,
+        type: this.getFileType(result.name),
+        size: fileInfo.size || 0,
+      };
+    }
+
+    throw new Error("File selection cancelled");
+  }
+
+  /**
+   * Extract text từ file
+   */
+  static async extractText(file: UploadedFile): Promise<string> {
+    switch (file.type) {
+      case "txt":
+        return await this.extractTextFromTxt(file.uri);
+
+      case "pdf":
+        return await this.extractTextFromPDF(file.uri);
+
+      case "docx":
+        return await this.extractTextFromDOCX(file.uri);
+
+      case "image":
+        return await this.extractTextFromImage(file.uri);
+
+      default:
+        throw new Error(`Unsupported file type: ${file.type}`);
+    }
+  }
+
+  /**
+   * OCR for images
+   */
+  static async extractTextFromImage(uri: string): Promise<string> {
+    const {
+      data: { text },
+    } = await Tesseract.recognize(uri, "vie", {
+      logger: (m) => console.log("OCR Progress:", m),
+    });
+
+    return text;
+  }
+
+  private static extractTextFromTxt(uri: string): Promise<string> {
+    return FileSystem.readAsStringAsync(uri);
+  }
+
+  private static async extractTextFromPDF(uri: string): Promise<string> {
+    // Use pdf-parse hoặc Cloud PDF API
+    // Implementation depends on chosen library
+    return "Extracted PDF text...";
+  }
+
+  private static async extractTextFromDOCX(uri: string): Promise<string> {
+    // Use mammoth.js
+    // Implementation depends on chosen library
+    return "Extracted DOCX text...";
+  }
+
+  private static getFileType(filename: string): FileType {
+    const ext = filename.split(".").pop()?.toLowerCase();
+    if (ext === "pdf") return "pdf";
+    if (ext === "docx" || ext === "doc") return "docx";
+    if (ext === "txt") return "txt";
+    if (["jpg", "jpeg", "png"].includes(ext || "")) return "image";
+    return "unknown";
+  }
+}
+
+interface UploadedFile {
+  uri: string;
+  name: string;
+  type: FileType;
+  size: number;
+}
+
+type FileType = "pdf" | "docx" | "txt" | "image" | "text_paste" | "unknown";
+```
+
+### 2. AILessonService
+
+Gọi AI API để phân tích text và tạo lesson templates.
+
+```typescript
+// services/AILessonService.ts
+import { OpenAI } from "openai"; // hoặc custom AI endpoint
+
+export class AILessonService {
+  private static client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  /**
+   * Analyze text và trích xuất lesson structure
+   */
+  static async analyzeLessonPlan(
+    teacherId: string,
+    text: string,
+    fileName?: string,
+    fileType?: FileType
+  ): Promise<AIAnalysisResult> {
+    const startTime = Date.now();
+
+    // Create analysis log
+    const analysisId = await this.createAnalysisLog(
+      teacherId,
+      text,
+      fileName,
+      fileType
+    );
+
+    try {
+      // Call AI API
+      const extracted = await this.callAIAPI(text);
+
+      // Save templates
+      const templates = await this.saveTemplates(analysisId, extracted.lessons);
+
+      // Update log status
+      await this.updateAnalysisLog(analysisId, {
+        status: "completed",
+        extracted_data: extracted,
+        processing_time_ms: Date.now() - startTime,
+      });
+
+      return {
+        analysis_id: analysisId,
+        status: "completed",
+        templates,
+        processing_time_ms: Date.now() - startTime,
+      };
+    } catch (error) {
+      // Update log with error
+      await this.updateAnalysisLog(analysisId, {
+        status: "failed",
+        error_message: error.message,
+        processing_time_ms: Date.now() - startTime,
+      });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Call OpenAI API with prompt
+   */
+  private static async callAIAPI(text: string): Promise<ExtractedLessonData> {
+    const prompt = `
+Bạn là trợ lý AI giúp giáo viên can thiệp sớm phân tích kế hoạch giảng dạy.
+
+Nhiệm vụ: Trích xuất thông tin từ văn bản kế hoạch giảng dạy sau đây và chuyển đổi thành cấu trúc JSON.
+
+Văn bản kế hoạch:
+"""
+${text}
+"""
+
+Yêu cầu đầu ra JSON:
+{
+  "lessons": [
+    {
+      "date": "YYYY-MM-DD", // Ngày học (ví dụ: 2024-10-22)
+      "session_time": "morning" hoặc "afternoon",
+      "contents": [
+        {
+          "title": "Tên hoạt động",
+          "description": "Mô tả chi tiết",
+          "goals": ["Mục tiêu 1", "Mục tiêu 2"]
+        }
+      ],
+      "confidence_score": 0-100 // Độ tin cậy AI
+    }
+  ],
+  "metadata": {
+    "week_number": số tuần (nếu có),
+    "month": "tháng" (nếu có),
+    "total_lessons": tổng số buổi học
+  }
+}
+
+Lưu ý:
+- Nhận diện các từ khóa: "Thứ 2", "Thứ 3", "Buổi sáng", "Buổi chiều"
+- Trích xuất nội dung dạy học và mục tiêu
+- Nếu không rõ thông tin, để null và confidence_score thấp
+`;
+
+    const response = await this.client.chat.completions.create({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" },
+      temperature: 0.3, // Low temperature for consistent parsing
+    });
+
+    const content = response.choices[0].message.content;
+    return JSON.parse(content || "{}");
+  }
+
+  private static async createAnalysisLog(
+    teacherId: string,
+    text: string,
+    fileName?: string,
+    fileType?: FileType
+  ): Promise<string> {
+    const id = `ai_log_${Date.now()}`;
+
+    await SQLiteService.insert("ai_analysis_log", {
+      id,
+      teacher_id: teacherId,
+      file_name: fileName,
+      file_type: fileType || "text_paste",
+      original_text: text,
+      status: "processing",
+      created_at: new Date(),
+    });
+
+    return id;
+  }
+
+  private static async saveTemplates(
+    analysisId: string,
+    lessons: any[]
+  ): Promise<LessonTemplate[]> {
+    const templates: LessonTemplate[] = [];
+
+    for (const lesson of lessons) {
+      const id = `template_${Date.now()}_${Math.random()}`;
+      const template: LessonTemplate = {
+        id,
+        analysis_id: analysisId,
+        lesson_date: lesson.date,
+        session_time: lesson.session_time,
+        time_range:
+          lesson.session_time === "morning" ? "8:00-11:00" : "14:00-16:00",
+        contents: lesson.contents,
+        goals: lesson.contents.flatMap((c: any) => c.goals || []),
+        confidence_score: lesson.confidence_score,
+        edited: false,
+        created_at: new Date(),
+      };
+
+      await SQLiteService.insert("lesson_template", template);
+      templates.push(template);
+    }
+
+    return templates;
+  }
+
+  private static async updateAnalysisLog(
+    analysisId: string,
+    updates: Partial<AIAnalysisLog>
+  ): Promise<void> {
+    await SQLiteService.update("ai_analysis_log", analysisId, updates);
+  }
+
+  /**
+   * Get templates for preview
+   */
+  static async getTemplates(analysisId: string): Promise<LessonTemplate[]> {
+    return await SQLiteService.query(
+      `SELECT * FROM lesson_template WHERE analysis_id = ? ORDER BY lesson_date`,
+      [analysisId]
+    );
+  }
+
+  /**
+   * Update template (user editing)
+   */
+  static async updateTemplate(
+    templateId: string,
+    updates: Partial<LessonTemplate>
+  ): Promise<void> {
+    await SQLiteService.update("lesson_template", templateId, {
+      ...updates,
+      edited: true,
+    });
+  }
+
+  /**
+   * Delete template
+   */
+  static async deleteTemplate(templateId: string): Promise<void> {
+    await SQLiteService.delete("lesson_template", templateId);
+  }
+}
+
+interface AIAnalysisResult {
+  analysis_id: string;
+  status: "processing" | "completed" | "failed";
+  templates: LessonTemplate[];
+  processing_time_ms: number;
+}
+```
+
+### 3. BulkCreationService
+
+Tạo hàng loạt sessions từ templates.
+
+```typescript
+// services/BulkCreationService.ts
+export class BulkCreationService {
+  /**
+   * Tạo nhiều sessions cùng lúc từ AI templates
+   */
+  static async bulkCreateSessions(
+    teacherId: string,
+    studentId: string,
+    analysisId: string,
+    templateIds: string[]
+  ): Promise<BulkCreationResult> {
+    const bulkId = `bulk_${Date.now()}`;
+    const sessionIds: string[] = [];
+    const failedSessions: FailedSession[] = [];
+
+    // Get all templates
+    const templates = await Promise.all(
+      templateIds.map((id) => this.getTemplate(id))
+    );
+
+    // Create sessions one by one
+    for (const template of templates) {
+      try {
+        const sessionId = await this.createSessionFromTemplate(
+          studentId,
+          template
+        );
+        sessionIds.push(sessionId);
+      } catch (error) {
+        failedSessions.push({
+          lesson_date: template.lesson_date,
+          session_time: template.session_time,
+          error_reason: error.message,
+        });
+      }
+    }
+
+    // Log bulk creation
+    const bulkLog: BulkSessionCreation = {
+      id: bulkId,
+      teacher_id: teacherId,
+      student_id: studentId,
+      analysis_id: analysisId,
+      session_ids: sessionIds,
+      total_sessions: templates.length,
+      success_count: sessionIds.length,
+      failed_count: failedSessions.length,
+      failed_sessions: failedSessions.length > 0 ? failedSessions : undefined,
+      created_at: new Date(),
+    };
+
+    await SQLiteService.insert("bulk_session_creation", bulkLog);
+
+    // Sync to cloud
+    SyncEngine.saveWithSync("bulk_session_creation", bulkLog);
+
+    return {
+      bulk_id: bulkId,
+      session_ids: sessionIds,
+      success_count: sessionIds.length,
+      failed_count: failedSessions.length,
+      failed_sessions: failedSessions,
+    };
+  }
+
+  private static async getTemplate(id: string): Promise<LessonTemplate> {
+    const templates = await SQLiteService.query(
+      `SELECT * FROM lesson_template WHERE id = ?`,
+      [id]
+    );
+    return templates[0];
+  }
+
+  private static async createSessionFromTemplate(
+    studentId: string,
+    template: LessonTemplate
+  ): Promise<string> {
+    const sessionId = `session_${Date.now()}_${Math.random()}`;
+
+    // Create session
+    const session: Session = {
+      id: sessionId,
+      student_id: studentId,
+      session_date: template.lesson_date,
+      session_time: template.session_time,
+      time_range: template.time_range,
+      status: "scheduled",
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    await SQLiteService.insert("session", session);
+
+    // Create contents for this session
+    for (let i = 0; i < template.contents.length; i++) {
+      const contentTemplate = template.contents[i];
+      const contentId = `content_${Date.now()}_${i}`;
+
+      const content: Content = {
+        id: contentId,
+        session_id: sessionId,
+        title: contentTemplate.title,
+        description: contentTemplate.description,
+        goals: contentTemplate.goals,
+        order_number: i + 1,
+        completed: false,
+        created_at: new Date(),
+      };
+
+      await SQLiteService.insert("content", content);
+    }
+
+    // Sync to cloud
+    SyncEngine.saveWithSync("session", session);
+
+    return sessionId;
+  }
+
+  /**
+   * Get bulk creation history
+   */
+  static async getBulkHistory(
+    teacherId: string
+  ): Promise<BulkSessionCreation[]> {
+    return await SQLiteService.query(
+      `SELECT * FROM bulk_session_creation 
+       WHERE teacher_id = ? 
+       ORDER BY created_at DESC 
+       LIMIT 50`,
+      [teacherId]
+    );
+  }
+}
+
+interface BulkCreationResult {
+  bulk_id: string;
+  session_ids: string[];
+  success_count: number;
+  failed_count: number;
+  failed_sessions?: FailedSession[];
+}
+
+interface FailedSession {
+  lesson_date: string;
+  session_time: string;
+  error_reason: string;
+}
+```
+
+### AI Data Flow
+
+```mermaid
+sequenceDiagram
+    participant User as Giáo viên
+    participant UI as AI Upload Screen
+    participant FileService as FileUploadService
+    participant AIService as AILessonService
+    participant BulkService as BulkCreationService
+    participant DB as SQLite
+
+    User->>UI: Upload file hoặc paste text
+    UI->>FileService: extractText(file)
+    FileService->>FileService: OCR (nếu image)
+    FileService-->>UI: Extracted text
+
+    UI->>AIService: analyzeLessonPlan(text)
+    AIService->>DB: Create ai_analysis_log (status: processing)
+
+    AIService->>AIService: Call OpenAI API
+    Note right of AIService: ~30 seconds
+
+    AIService->>DB: Save lesson_templates
+    AIService->>DB: Update ai_analysis_log (status: completed)
+    AIService-->>UI: analysis_id, templates
+
+    UI->>UI: Show Preview Screen
+    User->>UI: Edit template (optional)
+    UI->>AIService: updateTemplate(id, changes)
+
+    User->>UI: Tap "Tạo tất cả"
+    UI->>BulkService: bulkCreateSessions(analysisId, templateIds)
+
+    loop For each template
+        BulkService->>DB: Create session
+        BulkService->>DB: Create contents
+    end
+
+    BulkService->>DB: Create bulk_session_creation log
+    BulkService-->>UI: Bulk result
+
+    UI->>UI: Navigate to Session List
+    UI->>UI: Toast: "✅ Đã tạo 12 buổi học!"
 ```
 
 ---

@@ -27,6 +27,9 @@
 8. ✅ Ghi nhật ký retroactive (Ghi cho ngày trước) — Cho phép chọn ngày khi tạo/sửa entry
 9. ✅ Mini-calendar & Unlogged Sessions — Hiển thị ngày chưa ghi và cho phép mở nhanh buổi chưa ghi
 10. ✅ Reminders & Local Notifications — Cấu hình nhắc nhở để giảm trường hợp quên ghi
+11. 🤖 **AI Lesson Upload & Analysis** (MỚI) — Upload file bài giảng (PDF/DOCX/TXT/Image) hoặc dán text, AI tự động phân tích và trích xuất cấu trúc bài học
+12. 🤖 **AI Preview & Bulk Edit** (MỚI) — Xem trước danh sách buổi học AI đã phân tích, chỉnh sửa từng buổi trước khi tạo
+13. 🤖 **Bulk Session Creation** (MỚI) — Tạo nhiều buổi học cùng lúc (cả tuần/cả tháng) với một lần click, tiết kiệm thời gian lập kế hoạch
 
 **Lợi ích**:
 
@@ -34,10 +37,15 @@
 - 📊 Dữ liệu có cấu trúc, dễ phân tích
 - 🎯 Theo dõi tiến trình rõ ràng
 - 📱 Ghi nhận ngay tại thời điểm xảy ra
-
-- 🔁 Hỗ trợ ghi retroactive (khi quên ghi trong ngày). Ghi chú dữ liệu:
+- 🔁 Hỗ trợ ghi retroactive (khi quên ghi trong ngày):
   - recorded_for_date: ngày thực tế của buổi (dùng cho thống kê)
-  - recorded_at: timestamp khi ghi nhận/ chỉnh sửa (dùng để audit)
+  - recorded_at: timestamp khi ghi nhận/chỉnh sửa (dùng để audit)
+- 🤖 **AI-powered lesson planning** (MỚI):
+  - Tự động trích xuất nội dung từ file bài giảng
+  - Tạo hàng loạt buổi học với một lần upload
+  - Giảm 80% thời gian lập kế hoạch dạy học
+  - Hỗ trợ nhiều định dạng: PDF, DOCX, TXT, ảnh (với OCR)
+  - Xem trước và chỉnh sửa trước khi tạo
 
 ---
 
@@ -119,6 +127,106 @@ Ví dụ:
 
 - Nếu hành vi để **tránh việc khó** → Giảm độ khó, dạy kỹ năng xin nghỉ
 - Nếu hành vi để **thu hút chú ý** → Tăng chú ý khi hành vi tích cực, giảm chú ý khi hành vi tiêu cực
+
+---
+
+## 🤖 AI-Powered Features (MỚI)
+
+### Tổng quan
+
+Educare Connect tích hợp **AI thông minh** để giảm 80% thời gian lập kế hoạch dạy học, giúp giáo viên tập trung vào việc thực sự quan trọng: **can thiệp và giảng dạy**.
+
+### AI Lesson Creation - Tạo Bài học với AI
+
+#### 🎯 Vấn đề
+
+Giáo viên thường phải:
+
+- ⏰ Dành 2-3 giờ mỗi tuần để lập kế hoạch dạy học
+- 📝 Gõ thủ công tất cả nội dung từ file Word/PDF vào app
+- 🔁 Lặp đi lặp lại công việc nhập liệu cho nhiều buổi học tương tự
+
+#### ✨ Giải pháp AI
+
+**Upload một lần → AI tạo hàng loạt buổi học**
+
+1. **Upload File hoặc Dán Text**
+
+   - Hỗ trợ: PDF, DOCX, TXT, ảnh (với OCR)
+   - Hoặc paste trực tiếp từ clipboard
+   - Ví dụ: Kế hoạch giảng dạy 1 tuần, 1 tháng
+
+2. **AI Phân tích Thông minh (~30 giây)**
+
+   - Tự động nhận diện cấu trúc: Thứ 2, Thứ 3...
+   - Trích xuất: Ngày, Buổi (sáng/chiều), Nội dung, Mục tiêu
+   - Confidence score: Độ tin cậy của AI (0-100%)
+
+3. **Preview & Edit**
+
+   - Xem trước tất cả buổi học AI đã tạo
+   - Chỉnh sửa từng buổi nếu cần
+   - Xóa buổi không cần thiết
+   - Xác nhận và tạo tất cả cùng lúc
+
+4. **Bulk Creation**
+   - Tạo 5-20 buổi học chỉ trong 1 click
+   - Tự động lưu vào database
+   - Sẵn sàng cho ghi nhật ký
+
+#### 📊 Lợi ích Cụ thể
+
+| Trước khi có AI           | Sau khi có AI           | Tiết kiệm           |
+| ------------------------- | ----------------------- | ------------------- |
+| 2-3 giờ/tuần lập kế hoạch | 20-30 phút/tuần         | **80%**             |
+| Gõ thủ công từng buổi     | Upload 1 file           | **95%** công sức    |
+| Dễ sai sót khi nhập liệu  | AI trích xuất chính xác | **Giảm lỗi**        |
+| Mất thời gian cho admin   | Tập trung vào teaching  | **Tăng chất lượng** |
+
+#### 🔒 Bảo mật & Riêng tư
+
+- File được xử lý cục bộ hoặc trên server bảo mật
+- Không lưu trữ file gốc sau khi phân tích xong
+- Dữ liệu trích xuất chỉ teacher mới xem được
+- Log AI được mã hóa và audit trail đầy đủ
+
+#### 🎨 AI Workflow
+
+```mermaid
+flowchart LR
+    Upload[📂 Upload File<br/>PDF/DOCX/Image] --> AI[🤖 AI Phân tích<br/>~30s]
+    AI --> Preview[👀 Preview<br/>Danh sách buổi học]
+    Preview --> Edit{Chỉnh sửa?}
+    Edit -->|Có| EditModal[✏️ Edit từng buổi]
+    EditModal --> Preview
+    Edit -->|Không| Bulk[✅ Tạo tất cả<br/>Bulk Creation]
+    Bulk --> Success[🎉 Hoàn tất!<br/>12 buổi học đã sẵn sàng]
+
+    style Upload fill:#e3f2fd
+    style AI fill:#fff9c4
+    style Preview fill:#c8e6c9
+    style Bulk fill:#b2dfdb
+    style Success fill:#a5d6a7
+```
+
+#### 🚀 Use Cases
+
+1. **Lập kế hoạch đầu tháng**
+
+   - Upload: Kế hoạch tháng 10 (file Word)
+   - AI tạo: 20 buổi học cho cả tháng
+   - Thời gian: 5 phút thay vì 3 giờ
+
+2. **Copy từ file cũ**
+
+   - Scan hoặc chụp ảnh kế hoạch năm trước
+   - AI OCR và trích xuất
+   - Tạo mới cho năm nay với chỉnh sửa nhỏ
+
+3. **Paste từ Email/Chat**
+   - Nhận kế hoạch từ đồng nghiệp qua email
+   - Copy-paste vào AI Upload screen
+   - Tạo ngay trong 30 giây
 
 ---
 
@@ -387,20 +495,28 @@ React Native
 - [x] Từ điển hành vi
 - [x] Báo cáo phân tích
 - [x] Offline-first
+- [x] Session List với Mini-calendar
+- [x] Retroactive logging
+- [x] Reminders & Notifications
+- [x] 🤖 **AI Lesson Creation** (Upload file → Preview → Bulk create)
 
 ### Phiên bản 1.0 (Sắp tới)
 
 - [ ] Xuất báo cáo PDF
 - [ ] Gửi email cho phụ huynh
-- [ ] Lên kế hoạch buổi học
+- [ ] Lên kế hoạch buổi học (Manual advance planning)
 - [ ] Template nội dung dạy học
 - [ ] Nhiều giáo viên cùng lớp
 - [ ] Backup & Restore
+- [ ] 🤖 AI: Nhận diện giọng nói (Voice-to-text for logging)
+- [ ] 🤖 AI: Smart goal suggestions based on student profile
 
 ### Phiên bản 2.0 (Tương lai)
 
-- [ ] AI phân tích nâng cao
-- [ ] Gợi ý can thiệp cá nhân hóa
+- [ ] 🤖 AI phân tích hành vi nâng cao (pattern detection)
+- [ ] 🤖 Gợi ý can thiệp cá nhân hóa (AI-powered intervention recommendations)
+- [ ] 🤖 AI: Phân tích video hành vi (Computer Vision)
+- [ ] 🤖 AI: Tự động tạo báo cáo (Auto-generate reports from data)
 - [ ] Video recording hành vi
 - [ ] Dashboard cho phụ huynh
 - [ ] Cộng đồng giáo viên

@@ -28,6 +28,9 @@ erDiagram
     CONTENT ||--o{ ABC_RECORD : has
     STUDENT ||--o{ ABC_RECORD : has
     BEHAVIOR_DICTIONARY ||--o{ ABC_RECORD : references
+    TEACHER ||--o{ AI_ANALYSIS_LOG : creates
+    AI_ANALYSIS_LOG ||--o{ LESSON_TEMPLATE : produces
+    LESSON_TEMPLATE ||--o{ BULK_SESSION_CREATION : generates
 
     TEACHER {
         string id PK
@@ -94,6 +97,39 @@ erDiagram
         json interventions
         string icon
         int usage_count
+    }
+
+    AI_ANALYSIS_LOG {
+        string id PK
+        string teacher_id FK
+        string file_name
+        string file_type
+        text original_text
+        json extracted_data
+        string status
+        datetime created_at
+    }
+
+    LESSON_TEMPLATE {
+        string id PK
+        string analysis_id FK
+        date lesson_date
+        string session_time
+        json contents
+        json goals
+        int confidence_score
+        datetime created_at
+    }
+
+    BULK_SESSION_CREATION {
+        string id PK
+        string teacher_id FK
+        string analysis_id FK
+        json session_ids
+        int total_sessions
+        int success_count
+        int failed_count
+        datetime created_at
     }
 ```
 
@@ -548,6 +584,258 @@ interface Intervention {
 }
 ```
 
+### 7. AI_ANALYSIS_LOG (Nhật ký Phân tích AI) - MỚI 🤖
+
+```sql
+CREATE TABLE ai_analysis_log (
+    id TEXT PRIMARY KEY,
+    teacher_id TEXT NOT NULL,
+    file_name TEXT,
+    file_type TEXT, -- 'pdf', 'docx', 'txt', 'image', 'text_paste'
+    file_size INTEGER, -- in bytes
+    original_text TEXT, -- Raw text extracted from file
+    extracted_data TEXT, -- JSON: parsed lesson structure
+    status TEXT NOT NULL, -- 'processing', 'completed', 'failed'
+    error_message TEXT,
+    processing_time_ms INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES teacher(id)
+);
+
+CREATE INDEX idx_ai_log_teacher ON ai_analysis_log(teacher_id);
+CREATE INDEX idx_ai_log_status ON ai_analysis_log(status);
+CREATE INDEX idx_ai_log_created ON ai_analysis_log(created_at DESC);
+```
+
+**TypeScript Interface**:
+
+```typescript
+interface AIAnalysisLog {
+  id: string;
+  teacher_id: string;
+  file_name?: string;
+  file_type: "pdf" | "docx" | "txt" | "image" | "text_paste";
+  file_size?: number;
+  original_text: string;
+  extracted_data: ExtractedLessonData;
+  status: "processing" | "completed" | "failed";
+  error_message?: string;
+  processing_time_ms?: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface ExtractedLessonData {
+  lessons: {
+    date: string;
+    session_time: "morning" | "afternoon";
+    contents: {
+      title: string;
+      description?: string;
+      goals?: string[];
+    }[];
+    confidence_score: number; // 0-100
+  }[];
+  metadata: {
+    week_number?: number;
+    month?: string;
+    total_lessons: number;
+  };
+}
+```
+
+**Sample Data**:
+
+```json
+{
+  "id": "ai_log_001",
+  "teacher_id": "teacher_001",
+  "file_name": "Ke_hoach_tuan_42.pdf",
+  "file_type": "pdf",
+  "file_size": 245678,
+  "original_text": "Thứ 2:\n- Hoạt động 1: Ai đây? (Nhận biết bản thân)\n- Hoạt động 2: Vận động thô...",
+  "extracted_data": {
+    "lessons": [
+      {
+        "date": "2024-10-22",
+        "session_time": "morning",
+        "contents": [
+          {
+            "title": "Ai đây?",
+            "description": "Nhận biết bản thân",
+            "goals": [
+              "Nhận biết tên của bản thân",
+              "Trỏ vào ảnh của mình khi được hỏi"
+            ]
+          },
+          {
+            "title": "Hoạt động vận động",
+            "description": "Phát triển vận động thô",
+            "goals": ["Chạy thẳng 10m", "Nhảy tại chỗ 5 lần"]
+          }
+        ],
+        "confidence_score": 95
+      }
+    ],
+    "metadata": {
+      "week_number": 42,
+      "total_lessons": 5
+    }
+  },
+  "status": "completed",
+  "processing_time_ms": 32450,
+  "created_at": "2024-10-20T10:30:00Z"
+}
+```
+
+### 8. LESSON_TEMPLATE (Mẫu Bài học AI) - MỚI 🤖
+
+```sql
+CREATE TABLE lesson_template (
+    id TEXT PRIMARY KEY,
+    analysis_id TEXT NOT NULL,
+    lesson_date DATE NOT NULL,
+    session_time TEXT NOT NULL, -- 'morning', 'afternoon'
+    time_range TEXT, -- '8:00-11:00'
+    contents TEXT NOT NULL, -- JSON array of content objects
+    goals TEXT, -- JSON array of goals
+    confidence_score INTEGER, -- 0-100
+    edited BOOLEAN DEFAULT 0, -- Đã chỉnh sửa bởi user?
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (analysis_id) REFERENCES ai_analysis_log(id)
+);
+
+CREATE INDEX idx_template_analysis ON lesson_template(analysis_id);
+CREATE INDEX idx_template_date ON lesson_template(lesson_date);
+```
+
+**TypeScript Interface**:
+
+```typescript
+interface LessonTemplate {
+  id: string;
+  analysis_id: string;
+  lesson_date: string; // ISO date
+  session_time: "morning" | "afternoon";
+  time_range: string;
+  contents: ContentTemplate[];
+  goals: string[];
+  confidence_score: number;
+  edited: boolean;
+  created_at: Date;
+}
+
+interface ContentTemplate {
+  title: string;
+  description?: string;
+  goals: string[];
+  duration_minutes?: number;
+}
+```
+
+**Sample Data**:
+
+```json
+{
+  "id": "template_001",
+  "analysis_id": "ai_log_001",
+  "lesson_date": "2024-10-22",
+  "session_time": "morning",
+  "time_range": "8:00-11:00",
+  "contents": [
+    {
+      "title": "Ai đây?",
+      "description": "Nhận biết bản thân qua ảnh và gương",
+      "goals": [
+        "Nhận biết tên của bản thân",
+        "Trỏ vào ảnh của mình khi được hỏi 'Ai đây?'"
+      ],
+      "duration_minutes": 30
+    },
+    {
+      "title": "Hoạt động vận động",
+      "description": "Phát triển vận động thô ngoài trời",
+      "goals": ["Chạy thẳng 10m không vấp ngã", "Nhảy tại chỗ 5 lần liên tiếp"],
+      "duration_minutes": 45
+    }
+  ],
+  "goals": ["Nhận biết bản thân", "Phát triển vận động thô"],
+  "confidence_score": 95,
+  "edited": false,
+  "created_at": "2024-10-20T10:30:45Z"
+}
+```
+
+### 9. BULK_SESSION_CREATION (Tạo Buổi học Hàng loạt) - MỚI 🤖
+
+```sql
+CREATE TABLE bulk_session_creation (
+    id TEXT PRIMARY KEY,
+    teacher_id TEXT NOT NULL,
+    student_id TEXT NOT NULL,
+    analysis_id TEXT NOT NULL,
+    session_ids TEXT NOT NULL, -- JSON array of created session IDs
+    total_sessions INTEGER NOT NULL,
+    success_count INTEGER NOT NULL,
+    failed_count INTEGER DEFAULT 0,
+    failed_sessions TEXT, -- JSON array of failed session info
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES teacher(id),
+    FOREIGN KEY (student_id) REFERENCES student(id),
+    FOREIGN KEY (analysis_id) REFERENCES ai_analysis_log(id)
+);
+
+CREATE INDEX idx_bulk_teacher ON bulk_session_creation(teacher_id);
+CREATE INDEX idx_bulk_student ON bulk_session_creation(student_id);
+CREATE INDEX idx_bulk_analysis ON bulk_session_creation(analysis_id);
+```
+
+**TypeScript Interface**:
+
+```typescript
+interface BulkSessionCreation {
+  id: string;
+  teacher_id: string;
+  student_id: string;
+  analysis_id: string;
+  session_ids: string[];
+  total_sessions: number;
+  success_count: number;
+  failed_count: number;
+  failed_sessions?: FailedSession[];
+  created_at: Date;
+}
+
+interface FailedSession {
+  lesson_date: string;
+  session_time: string;
+  error_reason: string;
+}
+```
+
+**Sample Data**:
+
+```json
+{
+  "id": "bulk_001",
+  "teacher_id": "teacher_001",
+  "student_id": "student_001",
+  "analysis_id": "ai_log_001",
+  "session_ids": [
+    "session_101",
+    "session_102",
+    "session_103",
+    "session_104",
+    "session_105"
+  ],
+  "total_sessions": 5,
+  "success_count": 5,
+  "failed_count": 0,
+  "created_at": "2024-10-20T10:31:00Z"
+}
+```
+
 ---
 
 ## Relationships
@@ -572,6 +860,18 @@ STUDENT (1) ----< (N) ABC_RECORD
 
 BEHAVIOR_DICTIONARY (1) ----< (N) ABC_RECORD
 └─ Một hành vi trong từ điển được tham chiếu bởi nhiều bản ghi A-B-C
+
+TEACHER (1) ----< (N) AI_ANALYSIS_LOG
+└─ Một giáo viên có nhiều log phân tích AI
+
+AI_ANALYSIS_LOG (1) ----< (N) LESSON_TEMPLATE
+└─ Một log phân tích tạo ra nhiều mẫu bài học
+
+AI_ANALYSIS_LOG (1) ----< (N) BULK_SESSION_CREATION
+└─ Một log phân tích có thể tạo nhiều batch sessions
+
+BULK_SESSION_CREATION (N) ----< (1) STUDENT
+└─ Nhiều bulk creation cho một học sinh cụ thể
 ```
 
 ### Query Examples
@@ -831,6 +1131,19 @@ GET    /api/behaviors/:id                             # Lấy chi tiết hành v
 GET    /api/behaviors/search?q=ném                    # Tìm kiếm hành vi
 ```
 
+#### AI Lesson Creation (MỚI 🤖)
+
+```
+POST   /api/ai/analyze                                # Upload và phân tích file
+GET    /api/ai/analysis/:id                           # Lấy kết quả phân tích
+GET    /api/ai/analysis/:id/templates                 # Lấy lesson templates từ analysis
+PUT    /api/ai/templates/:id                          # Chỉnh sửa lesson template
+POST   /api/ai/bulk-create                            # Tạo hàng loạt sessions
+GET    /api/ai/bulk-create/:id                        # Lấy kết quả bulk creation
+GET    /api/teachers/:teacherId/ai-history            # Lịch sử sử dụng AI
+DELETE /api/ai/analysis/:id                           # Xóa analysis và templates
+```
+
 ### Request/Response Examples
 
 #### POST /api/sessions/:sessionId/contents
@@ -930,6 +1243,154 @@ GET    /api/behaviors/search?q=ném                    # Tìm kiếm hành vi
       "min_count": 0,
       "trend": "increasing"
     }
+  }
+}
+```
+
+#### POST /api/ai/analyze - MỚI 🤖
+
+**Request** (multipart/form-data hoặc JSON):
+
+```json
+{
+  "teacher_id": "teacher_001",
+  "file": "<binary file data>",
+  "file_name": "Ke_hoach_tuan_42.pdf",
+  "file_type": "pdf"
+}
+```
+
+Hoặc (paste text):
+
+```json
+{
+  "teacher_id": "teacher_001",
+  "text": "Thứ 2:\n- Hoạt động 1: Ai đây? (Nhận biết bản thân)\n- Hoạt động 2: Vận động thô...",
+  "file_type": "text_paste"
+}
+```
+
+**Response**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "analysis_id": "ai_log_001",
+    "status": "processing",
+    "estimated_time_seconds": 30,
+    "message": "AI đang phân tích file của bạn..."
+  }
+}
+```
+
+#### GET /api/ai/analysis/:id/templates - MỚI 🤖
+
+**Response**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "analysis_id": "ai_log_001",
+    "status": "completed",
+    "processing_time_ms": 32450,
+    "total_lessons": 5,
+    "templates": [
+      {
+        "id": "template_001",
+        "lesson_date": "2024-10-22",
+        "session_time": "morning",
+        "time_range": "8:00-11:00",
+        "contents": [
+          {
+            "title": "Ai đây?",
+            "description": "Nhận biết bản thân qua ảnh và gương",
+            "goals": [
+              "Nhận biết tên của bản thân",
+              "Trỏ vào ảnh của mình khi được hỏi"
+            ],
+            "duration_minutes": 30
+          },
+          {
+            "title": "Hoạt động vận động",
+            "description": "Phát triển vận động thô",
+            "goals": ["Chạy thẳng 10m", "Nhảy tại chỗ 5 lần"],
+            "duration_minutes": 45
+          }
+        ],
+        "confidence_score": 95,
+        "edited": false
+      },
+      {
+        "id": "template_002",
+        "lesson_date": "2024-10-23",
+        "session_time": "morning",
+        "contents": [...]
+      }
+      // ... 3 more templates
+    ]
+  }
+}
+```
+
+#### POST /api/ai/bulk-create - MỚI 🤖
+
+**Request**:
+
+```json
+{
+  "teacher_id": "teacher_001",
+  "student_id": "student_001",
+  "analysis_id": "ai_log_001",
+  "template_ids": ["template_001", "template_002", "template_003"]
+}
+```
+
+**Response**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "bulk_id": "bulk_001",
+    "total_sessions": 3,
+    "success_count": 3,
+    "failed_count": 0,
+    "session_ids": ["session_101", "session_102", "session_103"],
+    "message": "✅ Đã tạo 3 buổi học thành công!"
+  }
+}
+```
+
+#### PUT /api/ai/templates/:id - MỚI 🤖
+
+**Request**:
+
+```json
+{
+  "lesson_date": "2024-10-23",
+  "session_time": "afternoon",
+  "time_range": "14:00-16:00",
+  "contents": [
+    {
+      "title": "Nhận biết màu sắc (Đã chỉnh sửa)",
+      "description": "Phân biệt màu đỏ và xanh",
+      "goals": ["Gọi tên màu đỏ", "Gọi tên màu xanh"]
+    }
+  ]
+}
+```
+
+**Response**:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "template_001",
+    "edited": true,
+    "updated_at": "2024-10-20T10:45:00Z"
   }
 }
 ```
