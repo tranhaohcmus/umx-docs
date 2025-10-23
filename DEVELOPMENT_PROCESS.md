@@ -59,7 +59,7 @@ graph TB
 - Acceptance Criteria
 - Assumptions & Constraints
 
-**File tham khảo**: `FEATURES_OVERVIEW.md`
+**Template**: `FEATURES_OVERVIEW.md`
 
 #### 1.3. Functional Requirements Specification (FRS)
 
