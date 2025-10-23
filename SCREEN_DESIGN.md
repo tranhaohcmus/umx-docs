@@ -121,6 +121,7 @@
 
 - Hiển thị các nội dung dạy học đã lên kế hoạch
 - Cho phép giáo viên ghi nhận từng nội dung
+- Hỗ trợ ghi nhật ký cho các ngày trước (retroactive logging) khi giáo viên quên ghi trong ngày thực tế
 
 ### Layout Wireframe
 
@@ -184,6 +185,36 @@
 - **Tên học sinh**: 👦 Bé An (Nguyễn Văn An)
 - **Ngày**: 📅 Thứ Hai, 22/10/2025
 - **Buổi học**: 🕐 Buổi sáng (8:00 - 11:00)
+
+#### Date Selector / Date Pill
+
+- Khi mở màn hình Nhật ký Buổi học, hiển thị rõ ràng ngày đang được chỉnh sửa ở dạng "Date Pill" ngay dưới tên học sinh.
+- Format: 📅 Thứ Hai, 22/10/2025 • Trạng thái: "Hôm nay" / "Retroactive" (màu khác nhau)
+- Tap vào Date Pill sẽ mở Date Picker (native) để chọn ngày khác (retroactive). Sau khi chọn ngày, giao diện cập nhật tất cả timestamps liên quan.
+- Nếu đang chỉnh sửa cho ngày trước (retroactive), hiển thị badge nhỏ: "Retroactive entry" (màu vàng/amber) và tooltip: "Bạn đang ghi cho ngày 20/10/2025. Mọi timestamp mặc định sẽ theo ngày này (recorded_for_date)".
+
+#### Calendar & Unlogged Sessions Card
+
+- Dashboard và màn hình Nhật ký hỗ trợ một card nhỏ dạng Mini-Calendar ở phần đầu hoặc dưới tên học sinh, hiển thị các ngày đã/chuẩn bị ghi/ chưa ghi.
+- Mini-Calendar highlights:
+  - Xanh: Đã ghi
+  - Xám: Chưa ghi
+  - Vàng: Retroactive entries tồn tại (ngày đã được ghi nhưng không phải hôm nay)
+- Dưới Mini-Calendar có một card "Unlogged Sessions" liệt kê các buổi đã lên kế hoạch nhưng chưa được ghi cho khoảng thời gian đã chọn. Tapping vào một item trong danh sách sẽ mở màn hình Nhật ký cho chính ngày/buổi đó (với Date Pill đã set tương ứng).
+
+#### Reminders & Notifications UI
+
+- Trong Settings, cho phép bật/tắt Reminders với các tùy chọn: Hằng ngày (08:00), Trước buổi (30 phút), Không nhắc.
+- Khi Reminders bật, hiển thị local notification vào thời điểm đã chọn.
+- Trong Dashboard, hiển thị một small banner "Bạn có 2 buổi chưa ghi hôm nay" kèm nút "Ghi ngay".
+- Khi giáo viên mở màn hình Nhật ký mà hệ thống phát hiện có unlogged sessions trong lịch (ví dụ, hôm qua có buổi chưa ghi), hiển thị modal nhẹ: "Phát hiện buổi chưa ghi vào 21/10/2025 — Ghi bây giờ / Nhắc lại sau".
+
+#### Metadata & Timestamps
+
+- Mỗi bản ghi lưu hai trường thời gian chính:
+  - recorded_for_date: date (the day the session happened) — dùng để phân loại ngày/thống kê
+  - recorded_at: timestamp (when entry was created) — dùng để audit và hiển thị dòng thời gian
+- Khi giáo viên chỉnh sửa một entry retroactively, giữ nguyên recorded_for_date nhưng cập nhật recorded_at để phản ánh thời gian chỉnh sửa (và ghi log thay đổi).
 
 #### 2.3. Progress Indicator
 

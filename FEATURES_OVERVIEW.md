@@ -24,6 +24,9 @@
 5. ✅ Đánh giá thái độ học tập
 6. ✅ Ghi nhận hành vi bất thường (A-B-C)
 7. ✅ Lưu ghi chú chi tiết
+8. ✅ Ghi nhật ký retroactive (Ghi cho ngày trước) — Cho phép chọn ngày khi tạo/sửa entry
+9. ✅ Mini-calendar & Unlogged Sessions — Hiển thị ngày chưa ghi và cho phép mở nhanh buổi chưa ghi
+10. ✅ Reminders & Local Notifications — Cấu hình nhắc nhở để giảm trường hợp quên ghi
 
 **Lợi ích**:
 
@@ -31,6 +34,10 @@
 - 📊 Dữ liệu có cấu trúc, dễ phân tích
 - 🎯 Theo dõi tiến trình rõ ràng
 - 📱 Ghi nhận ngay tại thời điểm xảy ra
+
+- 🔁 Hỗ trợ ghi retroactive (khi quên ghi trong ngày). Ghi chú dữ liệu:
+  - recorded_for_date: ngày thực tế của buổi (dùng cho thống kê)
+  - recorded_at: timestamp khi ghi nhận/ chỉnh sửa (dùng để audit)
 
 ---
 
