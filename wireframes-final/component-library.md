@@ -648,6 +648,55 @@ Usage:
 - New items
 ```
 
+### Domain Tags
+
+```
+Style:
+- Padding: 4px 12px
+- Border Radius: 16px (pill shape)
+- Font: 12pt Medium
+- Height: 28pt
+- Display: inline-flex with icon
+
+Variants:
+1. 🏃 Vận động (Motor Skills)
+   - Background: #DBEAFE (Light Blue 100)
+   - Text: #1E40AF (Blue 800)
+   - Icon: 🏃
+
+2. 🧠 Nhận thức (Cognitive)
+   - Background: #FCE7F3 (Pink 100)
+   - Text: #9F1239 (Pink 900)
+   - Icon: 🧠
+
+3. 💬 Ngôn ngữ (Language)
+   - Background: #FEF3C7 (Amber 100)
+   - Text: #92400E (Amber 900)
+   - Icon: 💬
+
+4. 🤝 Xã hội (Social)
+   - Background: #D1FAE5 (Green 100)
+   - Text: #065F46 (Green 900)
+   - Icon: 🤝
+
+5. 🍴 Tự phục vụ (Self-care)
+   - Background: #E0E7FF (Indigo 100)
+   - Text: #3730A3 (Indigo 800)
+   - Icon: 🍴
+
+States:
+- Default: Colored background
+- Hover/Active: Darker background (10%)
+- Selected: Border 2px solid matching text color
+
+Usage:
+- Content cards in session creation
+- Content cards in logging overview
+- Content detail headers
+- Filter chips in analytics
+- Content type indicator
+```
+
 ## Charts (Simple)
 
 ### Bar Chart

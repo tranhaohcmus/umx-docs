@@ -10,6 +10,11 @@
 │   │                         │   │
 │   │ Thêm nội dung mới       │   │
 │   │                         │   │
+│   │ 🏷️ Lĩnh vực *          │   │
+│   │ ┌─────────────────────┐ │   │
+│   │ │ 🧠 Nhận thức     ▼  │ │   │ Dropdown
+│   │ └─────────────────────┘ │   │
+│   │                         │   │
 │   │ 📝 Tên nội dung *       │   │
 │   │ ┌─────────────────────┐ │   │
 │   │ │ VD: Nhận diện màu   │ │   │
@@ -51,9 +56,15 @@ Modal để thêm nội dung dạy học mới với:
 
 ### Fields
 
-1. **Tên nội dung** (Required)
-2. **Mô tả** (Optional)
-3. **Mục tiêu** (Dynamic list)
+1. **Lĩnh vực** (Required, Dropdown)
+   - 🏃 Vận động (Motor Skills)
+   - 🧠 Nhận thức (Cognitive)
+   - 💬 Ngôn ngữ (Language)
+   - 🤝 Xã hội (Social)
+   - 🍴 Tự phục vụ (Self-care)
+2. **Tên nội dung** (Required)
+3. **Mô tả** (Optional)
+4. **Mục tiêu** (Dynamic list)
 
 ### Actions
 
@@ -69,6 +80,7 @@ Modal để thêm nội dung dạy học mới với:
 
 ## Validation
 
+- Domain/Lĩnh vực is required (default: 🧠 Nhận thức)
 - Name is required
 - Must have at least 1 goal
 - Max 10 goals per content
