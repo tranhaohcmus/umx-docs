@@ -124,22 +124,55 @@ flowchart TD
 
 ### Chi tiết Các Bước
 
-#### Bước 1: Chọn Học sinh và Mở Nhật ký
+#### Bước 1: Chọn Học sinh
 
 - **Màn hình**: Dashboard
 - **Hành động**: Giáo viên chọn thẻ học sinh (ví dụ: "Bé An")
-- **Nút**: Nhấn "📝 Ghi Nhật ký Buổi học"
-- **Kết quả**: Chuyển đến màn hình "Nhật ký Buổi học"
+- **Nút**: Nhấn "📝 Ghi Nhật ký"
+- **Kết quả**: Chuyển đến màn hình "Danh sách Buổi học"
 
-#### Bước 2: Xem Danh sách Nội dung Dạy học
+#### Bước 2: Xem Danh sách Buổi học (MỚI)
+
+- **Màn hình**: Danh sách Buổi học
+- **Hiển thị**:
+  - Mini Calendar: Chọn ngày (mặc định: hôm nay)
+  - Danh sách buổi học theo ngày đã chọn
+  - Trạng thái mỗi buổi:
+    - ✅ **Đã hoàn thành**: Đã ghi đầy đủ nhật ký
+    - 📝 **Đang ghi**: Đang trong quá trình ghi nhật ký
+    - ⏰ **Đã lên lịch**: Chưa bắt đầu ghi
+    - ⚠️ **Quá hạn**: Đã qua ngày nhưng chưa ghi
+  - Nút: "➕ Tạo buổi học mới" (cho ngày đã chọn)
+
+**Các hành động**:
+
+- Tap vào Mini Calendar → Chọn ngày → Hiển thị buổi học của ngày đó
+- Tap vào buổi học **đã hoàn thành** → Xem chi tiết (read-only) hoặc chỉnh sửa
+- Tap vào buổi học **chưa ghi/đang ghi** → Tiếp tục ghi nhật ký
+- Tap "➕ Tạo buổi học mới" → Modal tạo buổi học mới với:
+  - Ngày: [Ngày đã chọn từ calendar]
+  - Buổi: Sáng/Chiều
+  - Thời gian: 8:00-11:00 (có thể điều chỉnh)
+  - Nội dung dạy học: [Danh sách nội dung đã lên kế hoạch]
+
+#### Bước 3: Mở Nhật ký Buổi học (với ngày đã xác định)
+
+- **Màn hình**: Nhật ký Buổi học
+- **Hiển thị rõ ràng**:
+  - **Header**: 👦 Bé An • 📅 **Thứ Hai, 22/10/2025** • 🕐 Buổi sáng
+  - Date Pill nổi bật (có màu nền): "Đang ghi cho: **22/10/2025**"
+  - Nếu đang ghi retroactive (ngày quá khứ): Badge màu vàng "⏰ Ghi bổ sung"
+
+#### Bước 4: Xem Danh sách Nội dung Dạy học
 
 - **Màn hình**: Nhật ký Buổi học
 - **Hiển thị**:
-  - Danh sách các nội dung đã lên kế hoạch cho ngày hôm đó
+  - **Ngày buổi học được chọn rõ ràng** (từ Bước 2)
+  - Danh sách các nội dung đã lên kế hoạch cho buổi học này
   - Ví dụ: "Nội dung 1: Phân biệt màu", "Nội dung 2: Kỹ năng vận động tinh"
 - **Trạng thái**: Có thể có trạng thái "Đã hoàn thành" hoặc "Chưa ghi nhận"
 
-#### Bước 3: Ghi nhận Chi tiết Nội dung
+#### Bước 5: Ghi nhận Chi tiết Nội dung
 
 - **Hành động**: Nhấn vào một nội dung (ví dụ: "Phân biệt màu")
 - **Hiển thị**: Form đánh giá chi tiết với 5 phần:
@@ -174,7 +207,7 @@ flowchart TD
 - Nút nổi bật: "➕ Thêm ghi nhận hành vi (A-B-C)"
 - Nếu nhấn → Mở Popup Form A-B-C
 
-#### Bước 4: Form A-B-C (Nếu có hành vi)
+#### Bước 6: Form A-B-C (Nếu có hành vi)
 
 **Popup/Modal hiển thị:**
 
@@ -208,18 +241,18 @@ flowchart TD
 ```
 
 - **Xử lý**: Dữ liệu A-B-C được lưu và **liên kết** với nội dung dạy học này
-- **Thời gian**: Tự động ghi nhận timestamp
+- **Thời gian**: Tự động ghi nhận timestamp (theo ngày buổi học được chọn)
 
-#### Bước 5: Hoàn tất Nội dung
+#### Bước 7: Hoàn tất Nội dung
 
 - **Hành động**: Nhấn nút "Hoàn tất Nội dung này"
 - **Xử lý**: Hệ thống lưu tất cả dữ liệu đánh giá vào database
 - **Chuyển hướng**: Quay lại màn hình "Nhật ký Buổi học"
 
-#### Bước 6: Tiếp tục hoặc Kết thúc
+#### Bước 8: Tiếp tục hoặc Kết thúc
 
-- Nếu còn nội dung khác → Lặp lại từ Bước 3
-- Nếu đã hoàn thành tất cả → Quay về Dashboard
+- Nếu còn nội dung khác → Lặp lại từ Bước 5
+- Nếu đã hoàn thành tất cả → Nhấn "Hoàn tất Buổi học" → Quay về Danh sách Buổi học hoặc Dashboard
 
 ---
 
