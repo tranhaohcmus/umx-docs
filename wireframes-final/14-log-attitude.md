@@ -4,11 +4,11 @@
 
 ```
 ┌─────────────────────────────────┐
-│ 9:41  ← Phân biệt màu   💾 [✕] │
+│ 9:41  ← Thái độ học tập  💾 [✕]│
 ├─────────────────────────────────┤
 │                                 │
 │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
-│  2/4: Thái độ Học tập          │
+│  Bước 2/4: Thái độ Học tập     │
 │                                 │
 │  😊 Tâm trạng chung             │
 │                                 │
@@ -54,7 +54,7 @@
 
 ## Purpose
 
-Step 2/4 - Đánh giá thái độ học tập của học sinh.
+Bước 2/4 - Đánh giá thái độ học tập TỔNG QUAN của học sinh trong buổi học.
 
 ## Components
 
@@ -83,8 +83,8 @@ Each slider:
 
 ### Actions
 
-- Continue to Step 3
-- Back to Step 1
+- Continue to Step 3 (Notes)
+- Back to Step 1 (All Goals Assessment)
 - Save draft
 
 ## Interactions
@@ -97,11 +97,16 @@ Each slider:
 
 ### Defaults
 
-- All sliders at middle position
-- No emoji selected
+- All sliders at middle position (50%)
+- No emoji selected initially
 - Empty notes
+
+## Notes
+
+- **Overall assessment**: Attitude for entire session, not per content
+- **Simplified**: Single mood + 3 sliders for whole session
 
 ## Related Screens
 
-- **Previous**: 13-log-detail.md
+- **Previous**: 13-log-detail.md (All Goals)
 - **Next**: 15-log-notes.md

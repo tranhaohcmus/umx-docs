@@ -33,10 +33,9 @@
 │  │ T2  T3  T4  T5  T6  T7  CN │ │
 │  │ ──  ──  ──  ──  ──  ──  ── │ │
 │  │ 21  22  23  24  25  26  27 │ │
-│  │ ⚠️  ✅  🔄  ⏰  ⭕  ⭕  ⭕ │ │
+│  │ ⚠️  ✅  ⏰  ⏰  ⭕  ⭕  ⭕ │ │
 │  │                            │ │
 │  │ • ✅ Hoàn thành            │ │
-│  │ • 🔄 Đang ghi              │ │
 │  │ • ⏰ Đã lên lịch           │ │
 │  │ • ⚠️ Quá hạn/Chưa ghi     │ │
 │  │ • ⭕ Chưa có buổi          │ │
@@ -48,22 +47,19 @@
 │  │ ✅ BUỔI SÁNG              │ │
 │  │ 8:00 - 11:00              │ │
 │  │                            │ │
-│  │ ████████████ 100%         │ │
-│  │ 5/5 nội dung hoàn thành   │ │
+│  │ Đã hoàn thành đánh giá    │ │
 │  │ Ghi lúc: 11:30            │ │
 │  │                            │ │
-│  │ [Xem lại] [Chia sẻ]       │ │
+│  │ [Xem chi tiết] [Chia sẻ]  │ │
 │  └───────────────────────────┘ │
 │                                 │
 │  ┌───────────────────────────┐ │
-│  │ 🔄 BUỔI CHIỀU • ĐANG GHI  │ │
+│  │ ⏰ BUỔI CHIỀU             │ │
 │  │ 14:00 - 16:30             │ │
 │  │                            │ │
-│  │ ████████░░░░ 60%          │ │
-│  │ 3/5 nội dung đã ghi       │ │
-│  │ Lưu lần cuối: 15:20       │ │
+│  │ Chưa bắt đầu đánh giá     │ │
 │  │                            │ │
-│  │ [TIẾP TỤC GHI →]          │ │
+│  │ [BẮT ĐẦU GHI →]           │ │
 │  └───────────────────────────┘ │
 │                                 │
 │  ⏰ Sắp tới                     │
@@ -119,10 +115,9 @@ Màn hình chi tiết học sinh hiển thị:
 - **Month/Week selector**: "Tháng 10/2025" with arrows
 - **Week view**: T2-CN (Mon-Sun)
 - **Status icons**:
-  - ✅ Completed
-  - 🔄 In progress
-  - ⏰ Scheduled
-  - ⚠️ Overdue/Not logged
+  - ✅ Completed (evaluated)
+  - ⏰ Scheduled (not started)
+  - ⚠️ Overdue/Not logged (past due date)
   - ⭕ No session
 - **Legend**: Status descriptions
 
@@ -130,14 +125,15 @@ Màn hình chi tiết học sinh hiển thị:
 
 - **Section header**: "🎯 Hôm nay - T3, 22/10"
 - **Session cards** (repeatable):
-  - **Status badge**: ✅ BUỔI SÁNG / 🔄 BUỔI CHIỀU • ĐANG GHI
+  - **Status badge**: ✅ BUỔI SÁNG (Completed) / ⏰ BUỔI CHIỀU (Not started)
   - **Time**: "8:00 - 11:00"
-  - **Progress bar**: Visual completion
-  - **Progress text**: "5/5 nội dung hoàn thành"
-  - **Timestamp**: "Ghi lúc: 11:30" or "Lưu lần cuối: 15:20"
+  - **Status text**:
+    - Completed: "Đã hoàn thành đánh giá"
+    - Not started: "Chưa bắt đầu đánh giá"
+  - **Timestamp**: "Ghi lúc: 11:30" (if completed)
   - **Action buttons**:
-    - Completed: [Xem lại] [Chia sẻ]
-    - In progress: [TIẾP TỤC GHI →]
+    - Completed: [Xem chi tiết] [Chia sẻ]
+    - Not started: [BẮT ĐẦU GHI →]
 
 ### Upcoming Sessions
 
@@ -176,8 +172,8 @@ Màn hình chi tiết học sinh hiển thị:
 - **Back button** → Dashboard
 - **More menu** → Edit/Delete/Archive student
 - **Share button** → Export student report (PDF/CSV)
-- **Completed session** → Session detail (read-only)
-- **In-progress session** → Continue logging
+- **Completed session** → Session detail (12-log-overview.md - read-only)
+- **Not started session** → Start logging (12-log-overview.md)
 - **Upcoming session** → Preview session plan
 - **Create button** → Bottom sheet (Manual/AI choice)
 
@@ -187,6 +183,16 @@ Màn hình chi tiết học sinh hiển thị:
 - **Empty sessions**: "Chưa có buổi học nào. Tạo buổi học đầu tiên!"
 - **No data for selected date**: "Không có buổi học vào ngày này"
 - **Error**: "Không thể tải dữ liệu. Vui lòng thử lại."
+
+## Notes
+
+- **Removed "TIẾP TỤC GHI"**: Sessions are either "Not started" or "Completed"
+- **Simplified states**: Only 2 states - waiting to start or finished
+- **No progress tracking**: Evaluation is atomic (all-or-nothing)
+- **Calendar icons updated**:
+  - ✅ Completed (evaluated)
+  - ⏰ Scheduled (not started)
+  - ⚠️ Overdue (past due date, not started)
 
 ## Validation Rules
 

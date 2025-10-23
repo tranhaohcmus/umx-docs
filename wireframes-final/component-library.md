@@ -621,7 +621,7 @@ Variants:
 - Neutral: Gray background
 
 Usage:
-- Session status (✅, 🔄, ⏰, ⚠️)
+- Session status (✅, ⏰, ⚠️)
 - User status
 - Notification indicators
 ```
