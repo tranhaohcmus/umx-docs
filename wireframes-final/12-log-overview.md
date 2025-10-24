@@ -75,7 +75,7 @@
 
 ```
 ┌─────────────────────────────────┐
-│ 9:41  ← T3, 22/10 Sáng  💾 ⋮    │
+│ 9:41  ← T3, 22/10 Sáng  💾 ⋮    │ Nav bar with menu
 ├─────────────────────────────────┤
 │                                 │
 │  ┌───────────────────────────┐ │
@@ -151,6 +151,24 @@ Màn hình tổng quan ghi nhật ký hiển thị:
 - **Case 2 (Đã đánh giá)**: Tổng quan kết quả, chi tiết từng nội dung, xem lại hoặc chỉnh sửa
 
 ## Components
+
+### Navigation Bar
+
+- **Back button** (←): Return to previous screen
+- **Title**: Session identifier (e.g., "T3, 22/10 Sáng")
+- **Save button** (💾): Manual save (auto-save every 2 min)
+- **Menu button** (⋮): Session actions
+
+**Menu Options (⋮):**
+
+```
+┌─────────────────────────────────┐
+│ ✏️ Sửa thông tin buổi học       │ → 04a-edit-session.md
+│ 🗑️ Xóa buổi học                 │ → Delete confirmation
+│ 📤 Xuất báo cáo                 │ → Export dialog
+│ ❌ Hủy                          │
+└─────────────────────────────────┘
+```
 
 ### Session Info Card
 
@@ -287,6 +305,7 @@ Animation: Smooth accordion 300ms ease-out
 
 - **[BẮT ĐẦU ĐÁNH GIÁ]** → 13-log-detail.md (All content evaluation)
 - **Back button** → Return to session selector
+- **Menu ⋮** → Session actions (Edit/Delete/Export)
 
 **Case 2 (Completed):**
 
@@ -294,6 +313,10 @@ Animation: Smooth accordion 300ms ease-out
 - **[✏️ Chỉnh sửa]** → 13-log-detail.md (Edit mode)
 - **[📤 Chia sẻ]** → Export options (PDF/Excel)
 - **Back button** → Return to session selector
+- **Menu ⋮** → Session actions:
+  - **Sửa thông tin buổi học** → 04a-edit-session.md (Edit date/time/notes)
+  - **Xóa buổi học** → Confirmation dialog → Delete session + all logs
+  - **Xuất báo cáo** → Export PDF/Excel with evaluation results
 
 ## Notes
 

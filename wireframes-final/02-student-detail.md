@@ -4,7 +4,7 @@
 
 ```
 ┌─────────────────────────────────┐
-│ 9:41      ← Bé An     ⋮  📤    │ Nav Bar
+│ 9:41      ← Bé An     ⋮  📤    │ Nav Bar (nút xuất báo cáo pdf,)
 ├─────────────────────────────────┤
 │                                 │
 │  ┌───────────────────────────┐ │
@@ -50,7 +50,7 @@
 │  │ Đã hoàn thành đánh giá    │ │
 │  │ Ghi lúc: 11:30            │ │
 │  │                            │ │
-│  │ [Xem chi tiết] [Chia sẻ]  │ │
+│  │ [Xem chi tiết]             │ │
 │  └───────────────────────────┘ │
 │                                 │
 │  ┌───────────────────────────┐ │
@@ -125,6 +125,7 @@ Màn hình chi tiết học sinh hiển thị:
 
 - **Section header**: "🎯 Hôm nay - T3, 22/10"
 - **Session cards** (repeatable):
+  - **Menu icon** (⋮): Right side, opens action menu
   - **Status badge**: ✅ BUỔI SÁNG (Completed) / ⏰ BUỔI CHIỀU (Not started)
   - **Time**: "8:00 - 11:00"
   - **Status text**:
@@ -134,6 +135,18 @@ Màn hình chi tiết học sinh hiển thị:
   - **Action buttons**:
     - Completed: [Xem chi tiết] [Chia sẻ]
     - Not started: [BẮT ĐẦU GHI →]
+
+**Session Card Menu (⋮):**
+
+```
+┌─────────────────────────┐
+│ ✏️ Sửa buổi học         │
+│ 🗑️ Xóa buổi học         │
+│ 📋 Sao chép             │
+│ 📤 Chia sẻ              │
+│ ❌ Hủy                  │
+└─────────────────────────┘
+```
 
 ### Upcoming Sessions
 
@@ -164,8 +177,10 @@ Màn hình chi tiết học sinh hiển thị:
 - **Swipe calendar left/right** = Change week
 - **Tap date** = Jump to that day and show sessions
 - **Tap session card** = Open session detail
+- **Tap ⋮ menu** = Open session actions menu
+- **Long press session** = Quick options (same as ⋮ menu)
 - **Pull down** = Refresh data
-- **Long press session** = Quick options (Edit, Delete, Share)
+- **Swipe left on session card** = Quick delete (shows confirmation)
 
 ### Navigation
 
@@ -176,6 +191,11 @@ Màn hình chi tiết học sinh hiển thị:
 - **Not started session** → Start logging (12-log-overview.md)
 - **Upcoming session** → Preview session plan
 - **Create button** → Bottom sheet (Manual/AI choice)
+- **Session ⋮ menu**:
+  - **Sửa buổi học** → 04a-edit-session.md (Edit session basic info)
+  - **Xóa buổi học** → Delete confirmation dialog (30-confirmations.md)
+  - **Sao chép** → Duplicate session
+  - **Chia sẻ** → Export session report
 
 ### States
 
