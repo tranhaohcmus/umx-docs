@@ -90,8 +90,12 @@
 │  ┌───────────────────────────┐ │
 │  │ 🎯 15/16 mục tiêu đạt     │ │
 │  │ 😊 Thái độ: Tốt           │ │
-│  │ 📝 3 hành vi ghi nhận     │ │
+│  │ 📝 Có ghi chú giáo viên   │ │
+│  │ 📷 2 ảnh đính kèm         │ │
+│  │ ⚠️ 2 hành vi ghi nhận     │ │
 │  └───────────────────────────┘ │
+│                                 │
+│  ─────────────────────────────  │
 │                                 │
 │  📚 Nội dung buổi học (5)      │
 │                                 │
@@ -136,7 +140,60 @@
 │  │ 🎯 2/2 mục tiêu đạt       │ │
 │  └───────────────────────────┘ │
 │                                 │
-│  [✏️ Chỉnh sửa]   │
+│  ─────────────────────────────  │
+│                                 │
+│  😊 Thái độ & Tâm trạng        │
+│  ┌───────────────────────────┐ │
+│  │ Tâm trạng chung: 🙂 Tốt   │ │
+│  │                           │ │
+│  │ 🤝 Hợp tác: ████░ Rất tốt │ │
+│  │ 🎯 Tập trung: ███░░ Khá   │ │
+│  │ 💪 Tự lập: ████░ Rất tốt  │ │
+│  │                           │ │
+│  │ 📝 Con rất vui và hợp tác │ │
+│  │    trong buổi học...      │ │
+│  │                           │ │
+│  │ [Xem đầy đủ ↓]            │ │
+│  └───────────────────────────┘ │
+│                                 │
+│  📝 Ghi chú Giáo viên          │
+│  ┌───────────────────────────┐ │
+│  │ Hôm nay con đã thể hiện   │ │
+│  │ sự tiến bộ rõ rệt trong   │ │
+│  │ việc nhận diện màu sắc... │ │
+│  │                           │ │
+│  │ 🎤 Ghi âm (1): 02:34      │ │
+│  │ [▶️ Phát]                 │ │
+│  │                           │ │
+│  │ 📷 Ảnh đính kèm (2):      │ │
+│  │ ┌──┐ ┌──┐                │ │
+│  │ │📷│ │📷│ [Xem tất cả]   │ │
+│  │ └──┘ └──┘                │ │
+│  │                           │ │
+│  │ [Xem đầy đủ ↓]            │ │
+│  └───────────────────────────┘ │
+│                                 │
+│  ⚠️ Hành vi ghi nhận (2)       │
+│  ┌───────────────────────────┐ │
+│  │ 🏃 Tự ý rời khỏi chỗ      │ │
+│  │ 🕐 10:15 • Mức độ: TB     │ │
+│  │                           │ │
+│  │ 🅰️ Yêu cầu làm bài khó    │ │
+│  │ 🅱️ Rời chỗ, đi lại        │ │
+│  │ ©️ Được nghỉ 5 phút        │ │
+│  │                           │ │
+│  │ [Xem chi tiết ↓]          │ │
+│  └───────────────────────────┘ │
+│                                 │
+│  ┌───────────────────────────┐ │
+│  │ 😢 Khóc khi bị từ chối    │ │
+│  │ 🕐 11:00 • Mức độ: Nhẹ    │ │
+│  │ [Xem chi tiết ↓]          │ │
+│  └───────────────────────────┘ │
+│                                 │
+│  ─────────────────────────────  │
+│                                 │
+│  [✏️ Chỉnh sửa]  [📤 Chia sẻ]  │
 │                                 │
 ├─────────────────────────────────┤
 │ [🏠] [📝 Ghi] [📊 Báo] [👤 Tôi]│
@@ -218,10 +275,48 @@ Màn hình tổng quan ghi nhật ký hiển thị:
 
 ### Summary Card (Case 2 only)
 
-- Total goals achieved
-- Overall attitude/mood
+- Total goals achieved (e.g., "15/16 mục tiêu đạt")
+- Overall attitude/mood emoji (e.g., "😊 Thái độ: Tốt")
+- Has teacher notes indicator
+- Number of photos/videos attached
 - Number of behaviors recorded
 - Completion timestamp
+
+### Detailed Information Sections (Case 2 only)
+
+Displayed below content list, collapsible:
+
+#### 1. Thái độ & Tâm trạng (Attitude)
+
+- **Mood emoji + label**: e.g., "🙂 Tốt"
+- **3 slider values with visual bars**:
+  - 🤝 Hợp tác (Cooperation)
+  - 🎯 Tập trung (Focus)
+  - 💪 Tự lập (Independence)
+- **Attitude notes preview** (first 2 lines)
+- **[Xem đầy đủ ↓]** button to expand full notes
+
+#### 2. Ghi chú Giáo viên (Teacher Notes)
+
+- **Text notes preview** (first 3 lines)
+- **Voice recordings** (if any):
+  - 🎤 Icon + duration
+  - [▶️ Phát] play button
+- **Photo/video attachments** (if any):
+  - 📷 Thumbnail grid (max 2 visible)
+  - Count indicator (e.g., "2 ảnh")
+  - [Xem tất cả] to view gallery
+- **[Xem đầy đủ ↓]** button to expand full content
+
+#### 3. Hành vi ghi nhận (Behaviors)
+
+- **Behavior count badge**: "⚠️ Hành vi ghi nhận (2)"
+- **Behavior cards** (collapsed):
+  - Behavior icon + name
+  - Time + severity level
+  - ABC summary (1 line each)
+  - [Xem chi tiết ↓] to expand full ABC details
+- If no behaviors: Show "✅ Không có hành vi đặc biệt"
 
 ## Interactions
 
@@ -297,6 +392,121 @@ Màn hình tổng quan ghi nhật ký hiển thị:
 └─────────────────────────────┘
 ```
 
+#### Attitude Section - Collapsed (default):
+
+```
+┌─────────────────────────────┐
+│ 😊 Thái độ & Tâm trạng      │
+│ ────────────────────────────│
+│ Tâm trạng chung: 🙂 Tốt     │
+│ 🤝 Hợp tác: ████░ Rất tốt   │
+│ [Xem đầy đủ ↓]              │
+└─────────────────────────────┘
+```
+
+#### Attitude Section - Expanded:
+
+```
+┌─────────────────────────────┐
+│ 😊 Thái độ & Tâm trạng      │
+│ ────────────────────────────│
+│ Tâm trạng chung: 🙂 Tốt     │
+│                             │
+│ 🤝 Hợp tác: ████░ Rất tốt   │
+│ 🎯 Tập trung: ███░░ Khá     │
+│ 💪 Tự lập: ████░ Rất tốt    │
+│                             │
+│ 📝 Ghi chú về thái độ:      │
+│ Con rất vui và hợp tác      │
+│ trong buổi học hôm nay.     │
+│ Tuy nhiên có lúc mất tập    │
+│ trung khi nghe tiếng ồn...  │
+│                             │
+│ [Thu gọn ▲]                 │
+└─────────────────────────────┘
+```
+
+#### Teacher Notes Section - Collapsed (default):
+
+```
+┌─────────────────────────────┐
+│ 📝 Ghi chú Giáo viên        │
+│ ────────────────────────────│
+│ Hôm nay con đã thể hiện     │
+│ sự tiến bộ rõ rệt...        │
+│                             │
+│ 🎤 1 ghi âm • 📷 2 ảnh      │
+│ [Xem đầy đủ ↓]              │
+└─────────────────────────────┘
+```
+
+#### Teacher Notes Section - Expanded:
+
+```
+┌─────────────────────────────┐
+│ 📝 Ghi chú Giáo viên        │
+│ ────────────────────────────│
+│ Hôm nay con đã thể hiện sự  │
+│ tiến bộ rõ rệt trong việc   │
+│ nhận diện màu sắc. Con có   │
+│ thể gọi đúng tên màu đỏ và  │
+│ xanh. Tuy nhiên vẫn còn     │
+│ nhầm lẫn khi phân biệt giữa │
+│ xanh lá và xanh dương...    │
+│                             │
+│ 🎤 Ghi âm (1): 02:34        │
+│ [▶️ Phát] [⏸️ Dừng]         │
+│                             │
+│ 📷 Ảnh đính kèm (2):        │
+│ ┌────┐ ┌────┐              │
+│ │ 📷 │ │ 📷 │ [Xem tất cả] │
+│ └────┘ └────┘              │
+│                             │
+│ [Thu gọn ▲]                 │
+└─────────────────────────────┘
+```
+
+#### Behavior Section - Collapsed (default):
+
+```
+┌─────────────────────────────┐
+│ ⚠️ Hành vi ghi nhận (2)     │
+│ ────────────────────────────│
+│ 🏃 Tự ý rời khỏi chỗ        │
+│ 🕐 10:15 • Mức độ: TB       │
+│ [Xem chi tiết ↓]            │
+└─────────────────────────────┘
+```
+
+#### Behavior Section - Expanded:
+
+```
+┌─────────────────────────────┐
+│ ⚠️ Hành vi ghi nhận (2)     │
+│ ────────────────────────────┘
+│                             │
+│ ┌───────────────────────┐   │
+│ │ 🏃 Tự ý rời khỏi chỗ  │   │
+│ │ 🕐 10:15 • TB         │   │
+│ │ ─────────────────────│   │
+│ │ 🅰️ Yêu cầu làm bài khó│   │
+│ │ 🅱️ Rời chỗ, đi lại    │   │
+│ │ ©️ Được nghỉ 5 phút    │   │
+│ └───────────────────────┘   │
+│                             │
+│ ┌───────────────────────┐   │
+│ │ 😢 Khóc khi bị từ chối│   │
+│ │ 🕐 11:00 • Nhẹ       │   │
+│ │ ─────────────────────│   │
+│ │ 🅰️ Không được ăn vặt  │   │
+│ │ 🅱️ Khóc, đạp chân     │   │
+│ │ ©️ Được an ủi         │   │
+│ └───────────────────────┘   │
+│                             │
+│ [Thu gọn ▲]                 │
+└─────────────────────────────┘
+```
+
 Animation: Smooth accordion 300ms ease-out
 
 ### Navigation
@@ -320,17 +530,58 @@ Animation: Smooth accordion 300ms ease-out
 
 ## Notes
 
-- **Two states**: Not evaluated vs. Completed
-- **No "Tiếp tục ghi"**: Only "Bắt đầu" or view inline
-- **No separate detail view button**: All details visible via expand/collapse
-- **Inline expand**: Shows goals list (Case 1) or goals with status (Case 2)
-- **Tap anywhere on card**: To expand/collapse
+### State Model (2 states only)
+
+- **State 1: Not evaluated** - Show [BẮT ĐẦU ĐÁNH GIÁ →] button
+- **State 2: Completed** - Show full detail view with all information
+- **No "Tiếp tục ghi"**: Removed intermediate state
+- **Binary**: Session is either not started or fully completed
+
+### Information Architecture (Case 2 - Completed)
+
+**Structured in 4 sections:**
+
+1. **Session Header** (always visible)
+
+   - Student info
+   - Completion status + timestamp
+   - Quick summary card
+
+2. **Content & Goals** (expandable)
+
+   - All teaching content with goal status
+   - Per-content notes
+
+3. **Attitude & Mood** (expandable)
+
+   - From Step 2/4 (screen 14)
+   - Overall mood + 3 sliders
+   - Attitude notes
+
+4. **Teacher Notes** (expandable)
+
+   - From Step 3/4 (screen 15)
+   - Text notes
+   - Voice recordings
+   - Photo/video attachments
+
+5. **Behaviors** (expandable)
+   - From Step 4/4 (screen 16)
+   - ABC behavior records
+   - Severity + time
+
+### UX Improvements
+
+- **Complete picture**: All evaluation data in one screen
+- **Progressive disclosure**: Collapsed by default, expand as needed
+- **No separate detail view**: Everything accessible inline
 - **Visual status indicators**:
   - ✅ = All goals achieved
   - ⚠️ = Some goals not achieved
-  - ❌ = Specific goal not achieved (in expanded view)
-- **Simplified navigation**: No intermediate screens needed to view results
-- **UX improvement**: Clear distinction between states, faster to scan results
+  - ❌ = Specific goal not achieved
+- **Rich media preview**: Photos, audio playback inline
+- **Simplified navigation**: No intermediate screens needed
+- **Quick scan**: Summary card shows key metrics at a glance
 
 ## Related Screens
 

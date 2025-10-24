@@ -13,17 +13,16 @@
 │  │ 👤 BA Bé An • 5 tuổi      │ │
 │  │ ──────────────────────────│ │
 │  │ ⏰ Buổi sáng: 8:00-11:00  │ │
-│  │ 🟢 Đang diễn ra           │ │
-│  │ 📊 60% hoàn thành         │ │
+│  │ ⭕ Chưa bắt đầu đánh giá  │ │
 │  │                           │ │
-│  │ [TIẾP TỤC GHI →]          │ │
+│  │ [BẮT ĐẦU GHI →]           │ │
 │  └───────────────────────────┘ │
 │                                 │
 │  ┌───────────────────────────┐ │
 │  │ 👤 MH Minh Hiếu • 4 tuổi  │ │
 │  │ ──────────────────────────│ │
 │  │ ⏰ Buổi chiều: 14:00-17:00│ │
-│  │ ⭕ Chưa bắt đầu           │ │
+│  │ ⭕ Chưa bắt đầu đánh giá  │ │
 │  │                           │ │
 │  │ [BẮT ĐẦU GHI →]           │ │
 │  └───────────────────────────┘ │
@@ -81,12 +80,9 @@ Màn hình cho phép chọn phiên học để ghi nhật ký:
   - Student info (avatar, name, age)
   - Time & session type
   - Status indicator:
-    - 🟢 Đang diễn ra
-    - ⭕ Chưa bắt đầu
-    - ✅ Đã hoàn thành
-  - Progress (if in-progress)
+    - ⭕ Chưa bắt đầu đánh giá
+    - ✅ Đã hoàn thành đánh giá
   - Action button:
-    - [TIẾP TỤC GHI →] (in-progress)
     - [BẮT ĐẦU GHI →] (not started)
     - [XEM CHI TIẾT] (completed)
 
@@ -122,23 +118,9 @@ Màn hình cho phép chọn phiên học để ghi nhật ký:
    - Pre-filter to that student's sessions
    - Show today + upcoming
 
-3. **Resume In-Progress**:
-   - If 1 session in-progress → Show dialog to resume
-   - If multiple → Show this selector
-
-### Resume Dialog (Context)
-
-```
-┌─────────────────────────────────┐
-│  Tiếp tục ghi?                  │
-│                                 │
-│  BA Bé An - Buổi sáng           │
-│  📊 60% hoàn thành              │
-│  ⏰ Bắt đầu: 08:00              │
-│                                 │
-│  [Tiếp tục]  [Chọn phiên khác] │
-└─────────────────────────────────┘
-```
+3. **All sessions listed**:
+   - No "in-progress" state
+   - Sessions are either "Not started" or "Completed"
 
 ### Empty States
 
@@ -159,9 +141,8 @@ Màn hình cho phép chọn phiên học để ghi nhật ký:
 
 1. **Tap [📝 Ghi] in nav bar**:
 
-   - Check for in-progress sessions
-   - If 1 in-progress → Show resume dialog
-   - If 0 or multiple → Show selector
+   - Show session selector directly
+   - List all not-started sessions first
 
 2. **From Student Detail**:
 
@@ -183,7 +164,7 @@ Màn hình cho phép chọn phiên học để ghi nhật ký:
 
 ```javascript
 // Get sessions for selector
-GET /api/sessions?date=2025-10-22&status=in-progress,pending
+GET /api/sessions?date=2025-10-22&status=pending,completed
 
 Response:
 {
@@ -200,12 +181,8 @@ Response:
       "timeSlot": "morning",
       "startTime": "08:00",
       "endTime": "11:00",
-      "status": "in-progress",
-      "progress": {
-        "completed": 3,
-        "total": 5,
-        "percentage": 60
-      }
+      "status": "pending", // or "completed"
+      "hasEvaluation": false
     }
   ],
   "previousDays": [...]
