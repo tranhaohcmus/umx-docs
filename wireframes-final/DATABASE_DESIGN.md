@@ -113,21 +113,39 @@ Tài liệu này mô tả **cấu trúc cơ sở dữ liệu** hoàn chỉnh cho
 
 
 ┌──────────────────────┐
-│  BEHAVIOR_LIBRARY    │
+│  BEHAVIOR_GROUPS     │
 ├──────────────────────┤
 │ id (PK)              │
 │ name_vn              │
 │ name_en              │
-│ category             │ (aggression, avoidance, attention, self_stim)
 │ description          │
-│ definition           │
-│ function             │ (attention, escape, sensory, tangible)
-│ examples             │ (JSON array)
-│ common_antecedents   │ (JSON array)
-│ common_consequences  │ (JSON array)
-│ intervention_tips    │ (JSON array)
+│ icon                 │
+│ common_tips          │ (JSON array)
+│ order_index          │
+│ is_active            │
+│ created_at           │
+│ updated_at           │
+└──────────┬───────────┘
+           │ 1
+           │ contains
+           │ N
+           ▼
+┌──────────────────────┐
+│  BEHAVIOR_LIBRARY    │
+├──────────────────────┤
+│ id (PK)              │
+│ behavior_group_id(FK)│
+│ behavior_id          │ (e.g., "1.1", "1.2", "2.1")
+│ name_vn              │
+│ name_en              │
+│ keywords             │ (JSON array - 10-15 keywords)
+│ manifestation        │ (TEXT - clinical description)
+│ explanation          │ (JSON array of {title, description})
+│ solutions            │ (JSON array of {title, description})
+│ sources              │ (JSON array - academic citations)
 │ icon                 │
 │ is_active            │
+│ usage_count          │ (system-wide)
 │ created_at           │
 │ updated_at           │
 └──────────┬───────────┘
@@ -425,39 +443,174 @@ Lưu kết quả đánh giá từng mục tiêu (Step 1).
 
 ---
 
-### 9. BEHAVIOR_LIBRARY (Thư viện Hành vi)
+### 9. BEHAVIOR_GROUPS (Nhóm Hành vi)
 
-Thư viện hành vi hệ thống (127+ behaviors).
+Phân loại hành vi theo nhóm lý thuyết (thay vì category cũ).
 
-| Column              | Type         | Constraints                                                    | Description                  |
-| ------------------- | ------------ | -------------------------------------------------------------- | ---------------------------- |
-| id                  | UUID         | PRIMARY KEY                                                    | ID duy nhất                  |
-| name_vn             | VARCHAR(255) | NOT NULL                                                       | Tên tiếng Việt               |
-| name_en             | VARCHAR(255) | -                                                              | Tên tiếng Anh                |
-| category            | VARCHAR(50)  | CHECK IN ('aggression', 'avoidance', 'attention', 'self_stim') | Danh mục                     |
-| description         | TEXT         | -                                                              | Mô tả hành vi                |
-| definition          | TEXT         | -                                                              | Định nghĩa chi tiết          |
-| function            | VARCHAR(50)  | CHECK IN ('attention', 'escape', 'sensory', 'tangible')        | Chức năng hành vi            |
-| examples            | JSON         | -                                                              | Mảng ví dụ quan sát          |
-| common_antecedents  | JSON         | -                                                              | Mảng nguyên nhân phổ biến    |
-| common_consequences | JSON         | -                                                              | Mảng kết quả thường thấy     |
-| intervention_tips   | JSON         | -                                                              | Mảng gợi ý can thiệp         |
-| icon                | VARCHAR(50)  | -                                                              | Icon/emoji đại diện          |
-| is_active           | BOOLEAN      | DEFAULT TRUE                                                   | Còn hiển thị?                |
-| usage_count         | INTEGER      | DEFAULT 0                                                      | Số lần sử dụng toàn hệ thống |
-| created_at          | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP                                      | Ngày tạo                     |
-| updated_at          | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP                                      | Ngày cập nhật                |
+| Column      | Type         | Constraints               | Description                      |
+| ----------- | ------------ | ------------------------- | -------------------------------- |
+| id          | UUID         | PRIMARY KEY               | ID duy nhất                      |
+| name_vn     | VARCHAR(255) | NOT NULL                  | Tên tiếng Việt                   |
+| name_en     | VARCHAR(255) | NOT NULL                  | Tên tiếng Anh                    |
+| description | TEXT         | -                         | Mô tả đặc điểm chung của nhóm    |
+| icon        | VARCHAR(50)  | -                         | Icon/emoji đại diện (😤, 👊, 👂) |
+| common_tips | JSON         | -                         | Mảng mẹo chung cho nhóm          |
+| order_index | INTEGER      | NOT NULL                  | Thứ tự hiển thị (1, 2, 3...)     |
+| is_active   | BOOLEAN      | DEFAULT TRUE              | Còn hiển thị?                    |
+| created_at  | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP | Ngày tạo                         |
+| updated_at  | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP | Ngày cập nhật                    |
 
 **Indexes:**
 
-- `idx_behavior_category` ON (category)
-- `idx_behavior_function` ON (function)
-- `idx_behavior_active` ON (is_active)
-- `idx_behavior_usage` ON (usage_count DESC)
+- `idx_behavior_groups_order` ON (order_index)
+- `idx_behavior_groups_active` ON (is_active)
+
+**Sample Data:**
+
+```sql
+INSERT INTO behavior_groups (id, name_vn, name_en, description, icon, common_tips, order_index) VALUES
+('group_1', 'CHỐNG ĐỐI & BƯỚNG BỈNH', 'Opposition & Defiance',
+ 'Nhóm hành vi liên quan đến việc trẻ thể hiện sự chống đối, không tuân theo hướng dẫn hoặc yêu cầu của người lớn. Đây là giai đoạn phát triển bình thường ở trẻ nhỏ khi trẻ khám phá tính tự chủ.',
+ '😤',
+ '["Giữ bình tĩnh, kiên nhẫn", "Đưa ra yêu cầu rõ ràng, ngắn gọn", "Công nhận cảm xúc của trẻ", "Tránh đối đầu trực tiếp"]',
+ 1),
+
+('group_2', 'HÀNH VI GÂY HẤN', 'Aggression',
+ 'Nhóm hành vi sử dụng vũ lực hoặc hành động công kích để gây tổn hại cho người khác. Thường xuất phát từ nhu cầu giao tiếp, bảo vệ lãnh thổ, hoặc thiếu kỹ năng xã hội.',
+ '👊',
+ '["Can thiệp ngay lập tức", "Đảm bảo an toàn cho tất cả trẻ", "Dạy kỹ năng thay thế", "Giám sát tích cực"]',
+ 2),
+
+('group_3', 'VẤN ĐỀ VỀ GIÁC QUAN', 'Sensory Issues',
+ 'Nhóm vấn đề liên quan đến cách trẻ xử lý thông tin cảm giác (âm thanh, ánh sáng, xúc giác, v.v.). Rất phổ biến ở trẻ có rối loạn phổ tự kỷ và rối loạn xử lý cảm giác.',
+ '👂',
+ '["Điều chỉnh môi trường", "Chuẩn bị trước cho trẻ", "Không ép buộc", "Cung cấp công cụ hỗ trợ"]',
+ 3);
+```
 
 ---
 
-### 10. BEHAVIOR_INCIDENTS (Hành vi ghi nhận)
+### 10. BEHAVIOR_LIBRARY (Thư viện Hành vi)
+
+Thư viện hành vi hệ thống với cấu trúc evidence-based đầy đủ.
+
+| Column            | Type         | Constraints                       | Description                                          |
+| ----------------- | ------------ | --------------------------------- | ---------------------------------------------------- |
+| id                | UUID         | PRIMARY KEY                       | ID duy nhất                                          |
+| behavior_group_id | UUID         | FOREIGN KEY → behavior_groups(id) | Nhóm hành vi                                         |
+| behavior_id       | VARCHAR(10)  | UNIQUE, NOT NULL                  | ID phân cấp (e.g., "1.1", "1.2", "2.1")              |
+| name_vn           | VARCHAR(255) | NOT NULL                          | Tên tiếng Việt                                       |
+| name_en           | VARCHAR(255) | NOT NULL                          | Tên tiếng Anh                                        |
+| keywords          | JSON         | NOT NULL                          | Mảng 10-15 từ khóa tiếng Việt cho tìm kiếm           |
+| manifestation     | TEXT         | NOT NULL                          | Mô tả biểu hiện lâm sàng (clinical description)      |
+| explanation       | JSON         | NOT NULL                          | Mảng {title, description} - giải thích lý thuyết     |
+| solutions         | JSON         | NOT NULL                          | Mảng {title, description} - can thiệp evidence-based |
+| sources           | JSON         | NOT NULL                          | Mảng trích dẫn học thuật (APA format)                |
+| icon              | VARCHAR(50)  | -                                 | Icon/emoji đại diện                                  |
+| is_active         | BOOLEAN      | DEFAULT TRUE                      | Còn hiển thị?                                        |
+| usage_count       | INTEGER      | DEFAULT 0                         | Số lần sử dụng toàn hệ thống (tự động tăng)          |
+| created_at        | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP         | Ngày tạo                                             |
+| updated_at        | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP         | Ngày cập nhật                                        |
+
+**Indexes:**
+
+- `idx_behavior_group` ON (behavior_group_id)
+- `idx_behavior_id` ON (behavior_id)
+- `idx_behavior_active` ON (is_active)
+- `idx_behavior_usage` ON (usage_count DESC)
+- `idx_behavior_keywords` ON (keywords) USING GIN (for full-text search - PostgreSQL)
+
+**Sample Data:**
+
+```sql
+-- Behavior 1.1: Ăn vạ (Tantrums)
+INSERT INTO behavior_library (
+  behavior_group_id,
+  behavior_id,
+  name_vn,
+  name_en,
+  keywords,
+  manifestation,
+  explanation,
+  solutions,
+  sources,
+  icon
+) VALUES (
+  'group_1',
+  '1.1',
+  'Ăn vạ',
+  'Tantrums',
+  '["ăn vạ", "la hét", "nằm lăn ra đất", "gào khóc", "tức giận dữ dội", "khóc dai", "mè nheo", "hờn dỗi", "nổi cáu", "cơn giận", "bùng nổ cảm xúc", "không kiểm soát được", "khóc không nín", "giãy nảy"]',
+  'Trẻ bộc phát cảm xúc một cách dữ dội, không kiểm soát được. Có thể la hét, khóc dai, nằm lăn ra đất, giãy nảy, đạp chân, hoặc ném đồ vật. Cơn ăn vạ thường diễn ra khi trẻ không được đáp ứng ngay lập tức, hoặc khi bị yêu cầu thực hiện một việc không mong muốn.',
+  '[
+    {
+      "title": "Nhu cầu Giao tiếp",
+      "description": "Với trẻ nhỏ, đặc biệt là trẻ chưa biết nói hoặc còn hạn chế ngôn ngữ, ăn vạ là một phương tiện giao tiếp để thể hiện nhu cầu, sự thất vọng, mệt mỏi, đói, hoặc khó chịu."
+    },
+    {
+      "title": "Nhu cầu Tự chủ & Độc lập",
+      "description": "Từ 18 tháng đến 3 tuổi là giai đoạn khủng hoảng tự chủ. Trẻ muốn tự làm mọi thứ, và khi bị ngăn cản hoặc bị ép làm theo yêu cầu người lớn, trẻ có thể phản ứng bằng cơn ăn vạ."
+    },
+    {
+      "title": "Giới hạn Sinh lý",
+      "description": "Vỏ não trước trán (prefrontal cortex), chịu trách nhiệm kiểm soát cảm xúc và lập luận, chưa phát triển hoàn thiện ở trẻ nhỏ."
+    }
+  ]',
+  '[
+    {
+      "title": "Giữ bình tĩnh & Đảm bảo an toàn",
+      "description": "Phản ứng của người lớn có thể khuếch đại hoặc làm dịu cơn ăn vạ. Hãy thở sâu, giữ giọng điệu bình tĩnh, và đảm bảo trẻ không tự làm đau mình."
+    },
+    {
+      "title": "Không thỏa hiệp với cơn ăn vạ",
+      "description": "Nếu ăn vạ để đòi bánh, mà bạn cho bánh để trẻ im lặng, trẻ sẽ học được rằng ăn vạ = được điều mình muốn."
+    },
+    {
+      "title": "Công nhận Cảm xúc",
+      "description": "Gọi tên cảm xúc của trẻ bằng giọng điệu bình tĩnh: Con đang rất tức giận vì không được chơi tiếp, phải không?"
+    },
+    {
+      "title": "Phớt lờ có kế hoạch (Planned Ignoring)",
+      "description": "Nếu ăn vạ không gây nguy hiểm, hãy làm ngơ và tiếp tục công việc của bạn (nhưng vẫn để mắt theo dõi)."
+    },
+    {
+      "title": "Dạy Kỹ năng Điều chỉnh Cảm xúc",
+      "description": "Khi trẻ đã bình tĩnh, dạy trẻ các chiến lược đơn giản như Hít thở sâu, Đếm số, Ôm gấu bông."
+    }
+  ]',
+  '[
+    "Potegal, M., & Davidson, R. J. (2003). Temper tantrums in young children: 1. Behavioral composition. Journal of Developmental & Behavioral Pediatrics, 24(3), 140-147.",
+    "Sroufe, L. A. (2000). Early relationships and the development of children. Infant Mental Health Journal, 21(1‐2), 67-74."
+  ]',
+  '😤'
+);
+```
+
+**JSON Field Structures:**
+
+```typescript
+// keywords: Array of Vietnamese search keywords
+keywords: string[] // 10-15 keywords
+
+// explanation: Array of theoretical frameworks
+explanation: Array<{
+  title: string      // Framework name
+  description: string // Detailed explanation
+}>
+
+// solutions: Array of evidence-based interventions
+solutions: Array<{
+  title: string      // Strategy name
+  description: string // Implementation guide
+}>
+
+// sources: Array of academic citations
+sources: string[] // APA format citations
+```
+
+---
+
+### 11. BEHAVIOR_INCIDENTS (Hành vi ghi nhận)
 
 Lưu các hành vi cụ thể ghi nhận trong buổi học (Step 4).
 
@@ -484,7 +637,7 @@ Lưu các hành vi cụ thể ghi nhận trong buổi học (Step 4).
 
 ---
 
-### 11. CONTENT_LIBRARY (Thư viện Nội dung)
+### 12. CONTENT_LIBRARY (Thư viện Nội dung)
 
 Thư viện nội dung dạy học có sẵn (templates).
 
@@ -509,7 +662,7 @@ Thư viện nội dung dạy học có sẵn (templates).
 
 ---
 
-### 12. TEACHER_FAVORITES (Yêu thích)
+### 13. TEACHER_FAVORITES (Yêu thích)
 
 Lưu hành vi yêu thích của giáo viên.
 
@@ -531,7 +684,7 @@ Lưu hành vi yêu thích của giáo viên.
 
 ---
 
-### 13. USER_SETTINGS (Cài đặt)
+### 14. USER_SETTINGS (Cài đặt)
 
 Lưu các cài đặt cá nhân của giáo viên.
 
@@ -554,7 +707,7 @@ Lưu các cài đặt cá nhân của giáo viên.
 
 ---
 
-### 14. BACKUP_HISTORY (Lịch sử sao lưu)
+### 15. BACKUP_HISTORY (Lịch sử sao lưu)
 
 Lưu lịch sử backup dữ liệu.
 
@@ -575,7 +728,7 @@ Lưu lịch sử backup dữ liệu.
 
 ---
 
-### 15. AI_PROCESSING (Xử lý AI)
+### 16. AI_PROCESSING (Xử lý AI)
 
 Lưu tiến trình xử lý AI upload.
 
@@ -613,10 +766,11 @@ Lưu tiến trình xử lý AI upload.
 5. **SESSION_LOGS → LOG_MEDIA_ATTACHMENTS**: 1 nhật ký có nhiều media
 6. **SESSION_LOGS → GOAL_EVALUATIONS**: 1 nhật ký đánh giá nhiều mục tiêu
 7. **SESSION_LOGS → BEHAVIOR_INCIDENTS**: 1 nhật ký ghi nhận nhiều hành vi
-8. **BEHAVIOR_LIBRARY → BEHAVIOR_INCIDENTS**: 1 hành vi trong thư viện được sử dụng nhiều lần
-9. **TEACHERS → CONTENT_LIBRARY**: 1 giáo viên tạo nhiều content templates
-10. **TEACHERS → BACKUP_HISTORY**: 1 giáo viên có nhiều backup
-11. **TEACHERS → AI_PROCESSING**: 1 giáo viên có nhiều lần xử lý AI
+8. **BEHAVIOR_GROUPS → BEHAVIOR_LIBRARY**: 1 nhóm có nhiều hành vi
+9. **BEHAVIOR_LIBRARY → BEHAVIOR_INCIDENTS**: 1 hành vi trong thư viện được sử dụng nhiều lần
+10. **TEACHERS → CONTENT_LIBRARY**: 1 giáo viên tạo nhiều content templates
+11. **TEACHERS → BACKUP_HISTORY**: 1 giáo viên có nhiều backup
+12. **TEACHERS → AI_PROCESSING**: 1 giáo viên có nhiều lần xử lý AI
 
 ### One-to-One (1-1)
 
@@ -632,6 +786,79 @@ Lưu tiến trình xử lý AI upload.
 
 ## 📊 DỮ LIỆU MẪU
 
+### Behavior Groups (Nhóm Hành vi)
+
+```sql
+-- 3 nhóm chính dựa trên lý thuyết hành vi và phát triển trẻ em
+
+-- Group 1: Chống đối & Bướng bỉnh (Opposition & Defiance)
+--   Icon: 😤
+--   Behaviors: 1.1 Ăn vạ, 1.2 Từ chối làm theo yêu cầu
+
+-- Group 2: Hành vi Gây hấn (Aggression)
+--   Icon: 👊
+--   Behaviors: 2.1 Đánh bạn
+
+-- Group 3: Vấn đề về Giác quan (Sensory Issues)
+--   Icon: 👂
+--   Behaviors: 3.1 Nhạy cảm với âm thanh
+```
+
+### Behavior Data Structure
+
+```json
+{
+  "behavior_id": "1.1",
+  "name_vn": "Ăn vạ",
+  "name_en": "Tantrums",
+  "keywords": [
+    "ăn vạ",
+    "la hét",
+    "nằm lăn ra đất",
+    "gào khóc",
+    "tức giận dữ dội",
+    "khóc dai",
+    "mè nheo",
+    "hờn dỗi",
+    "nổi cáu",
+    "cơn giận",
+    "bùng nổ cảm xúc",
+    "không kiểm soát được",
+    "khóc không nín",
+    "giãy nảy"
+  ],
+  "manifestation": "Trẻ bộc phát cảm xúc một cách dữ dội...",
+  "explanation": [
+    {
+      "title": "Nhu cầu Giao tiếp",
+      "description": "Với trẻ nhỏ, đặc biệt là trẻ chưa biết nói..."
+    },
+    {
+      "title": "Nhu cầu Tự chủ & Độc lập",
+      "description": "Từ 18 tháng đến 3 tuổi..."
+    },
+    {
+      "title": "Giới hạn Sinh lý",
+      "description": "Vỏ não trước trán chưa phát triển hoàn thiện..."
+    }
+  ],
+  "solutions": [
+    {
+      "title": "Giữ bình tĩnh & Đảm bảo an toàn",
+      "description": "Phản ứng của người lớn có thể khuếch đại..."
+    },
+    {
+      "title": "Không thỏa hiệp với cơn ăn vạ",
+      "description": "Nếu ăn vạ để đòi bánh..."
+    }
+  ],
+  "sources": [
+    "Potegal, M., & Davidson, R. J. (2003)...",
+    "Sroufe, L. A. (2000)..."
+  ]
+}
+```
+
 ### Domain Values (Lĩnh vực)
 
 ```sql
@@ -642,18 +869,40 @@ Lưu tiến trình xử lý AI upload.
 -- Self-care (Tự phục vụ) 🍴
 ```
 
-### Behavior Categories
+### Behavior Groups & Behaviors
+
+**From data.md wireframe:**
 
 ```sql
+-- Group 1: HÀNH VI CHỐNG ĐỐI & BƯỚNG BỈNH (Opposition & Defiance)
+--   1.1: Ăn vạ (Tantrums) - 14 keywords, 3 explanations, 5 solutions, 2 sources
+--   1.2: Từ chối làm theo yêu cầu (Non-compliance) - 13 keywords, 4 explanations, 4 solutions, 2 sources
+
+-- Group 2: HÀNH VI GÂY HẤN (Aggression)
+--   2.1: Đánh bạn (Physical Aggression) - 13 keywords, 4 explanations, 4 solutions, 2 sources
+
+-- Group 3: CÁC VẤN ĐỀ VỀ GIÁC QUAN (Sensory Issues)
+--   3.1: Nhạy cảm với âm thanh (Auditory Hypersensitivity) - 10 keywords, 2 explanations, 5 solutions, 2 sources
+```
+
+### Old Behavior Categories (Deprecated)
+
+**Note:** Old category system replaced by behavior_groups table.
+
+```sql
+-- Old categories (no longer used):
 -- Aggression (Hung hăng) ⚠️
 -- Avoidance (Tránh né) 🏃
 -- Attention (Thu hút chú ý) 📢
 -- Self-stimulation (Tự kích thích) 🔄
 ```
 
-### Behavior Functions
+### Old Behavior Functions (Deprecated)
+
+**Note:** Function is no longer a separate field. Now part of explanation JSON.
 
 ```sql
+-- Old functions (no longer separate field):
 -- Attention (Thu hút sự chú ý)
 -- Escape (Thoát khỏi tình huống)
 -- Sensory (Kích thích giác quan)
@@ -678,10 +927,11 @@ Lưu tiến trình xử lý AI upload.
 Đã định nghĩa indexes cho:
 
 1. **Foreign keys**: Tất cả FK đều có index
-2. **Search fields**: email, status, date
-3. **Filter fields**: category, domain, function
-4. **Sort fields**: created_at, usage_count
+2. **Search fields**: email, status, date, behavior_id
+3. **Filter fields**: behavior_group_id, domain, is_active
+4. **Sort fields**: created_at, usage_count, order_index
 5. **Composite indexes**: (student_id, date), (teacher_id, key)
+6. **Full-text search**: keywords (GIN index for PostgreSQL JSON search)
 
 ### Query Optimization Tips
 
@@ -697,14 +947,41 @@ WHERE s.teacher_id = :teacher_id
 GROUP BY s.id;
 
 -- Weekly behavior analytics (indexed by behavior_id, occurred_at)
-SELECT b.name_vn, COUNT(*) as count
+SELECT bg.name_vn as group_name, b.behavior_id, b.name_vn, COUNT(*) as count
 FROM behavior_incidents bi
 JOIN behavior_library b ON bi.behavior_library_id = b.id
+JOIN behavior_groups bg ON b.behavior_group_id = bg.id
 WHERE bi.occurred_at >= :week_start
   AND bi.occurred_at < :week_end
-GROUP BY b.id, b.name_vn
+GROUP BY bg.id, bg.name_vn, b.behavior_id, b.name_vn
 ORDER BY count DESC
 LIMIT 5;
+
+-- Search behaviors by keyword (using GIN index)
+SELECT b.*, bg.name_vn as group_name
+FROM behavior_library b
+JOIN behavior_groups bg ON b.behavior_group_id = bg.id
+WHERE b.keywords::text ILIKE '%' || :search_term || '%'
+  AND b.is_active = true
+ORDER BY b.usage_count DESC;
+
+-- Get behaviors by group with stats
+SELECT b.*,
+       COUNT(DISTINCT bi.id) as total_incidents,
+       COUNT(DISTINCT CASE
+         WHEN sl.session_id IN (
+           SELECT id FROM sessions WHERE student_id IN (
+             SELECT id FROM students WHERE teacher_id = :teacher_id
+           )
+         ) THEN bi.id
+       END) as teacher_incidents
+FROM behavior_library b
+LEFT JOIN behavior_incidents bi ON b.id = bi.behavior_library_id
+LEFT JOIN session_logs sl ON bi.session_log_id = sl.id
+WHERE b.behavior_group_id = :group_id
+  AND b.is_active = true
+GROUP BY b.id
+ORDER BY b.behavior_id;
 ```
 
 ---
@@ -725,18 +1002,19 @@ LIMIT 5;
 7. log_media_attachments
 8. goal_evaluations
 
-### Phase 3: Behavior System
+### Phase 3: Behavior System (Updated)
 
-9. behavior_library
-10. behavior_incidents
-11. teacher_favorites
+9. behavior_groups (NEW)
+10. behavior_library (Enhanced with new fields)
+11. behavior_incidents
+12. teacher_favorites
 
 ### Phase 4: Supporting Features
 
-12. content_library
-13. user_settings
-14. backup_history
-15. ai_processing
+13. content_library
+14. user_settings
+15. backup_history
+16. ai_processing
 
 ---
 
@@ -757,9 +1035,15 @@ LIMIT 5;
 
 ### Behavior Rules
 
-1. ABC (Antecedent, Behavior, Consequence) đều bắt buộc
-2. Severity level từ 1-5
-3. occurred_at phải trong khoảng thời gian session
+1. Hierarchical ID (behavior_id) must be unique (e.g., "1.1", "1.2", "2.1")
+2. Keywords array must have 10-15 items for effective search
+3. Manifestation is required (clinical description)
+4. Explanation must have at least 2 theoretical frameworks
+5. Solutions must have at least 4 evidence-based strategies
+6. Sources must include at least 2 academic citations
+7. ABC (Antecedent, Behavior, Consequence) required for incidents
+8. Severity level từ 1-5
+9. occurred_at phải trong khoảng thời gian session
 
 ### Content Rules
 
