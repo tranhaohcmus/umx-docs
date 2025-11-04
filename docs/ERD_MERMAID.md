@@ -126,7 +126,7 @@ erDiagram
 
     SESSION_LOGS {
         uuid id PK
-        uuid session_id FK UK "unique 1-1"
+        uuid session_id FK "unique,1-1"
         timestamp logged_at
         timestamp completed_at
         time actual_start_time
