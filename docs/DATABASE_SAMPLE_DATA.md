@@ -2,7 +2,6 @@ Tôi sẽ fix lại file DATABASE_SAMPLE_DATA.md cho đồng bộ với ERD mớ
 
 # 📝 DATABASE_SAMPLE_DATA.md - PHIÊN BẢN SỬA LẠI
 
-```markdown
 # Database Sample Data - Educare Connect
 
 Tài liệu này minh họa **dữ liệu mẫu** cho tất cả các bảng trong hệ thống, giúp dễ hình dung cấu trúc và mối quan hệ giữa các bảng.
