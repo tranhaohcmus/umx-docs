@@ -1,0 +1,983 @@
+{
+  "info": {
+    "name": "Educare Connect API",
+    "description": "Complete API collection for Educare Connect - Early Intervention Teacher Support System",
+    "version": "2.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.educare-connect.com/v1",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "teacher_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "student_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "session_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication & User Management",
+      "item": [
+        {
+          "name": "1.1 Register Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has user object', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.user).to.be.an('object');",
+                  "    pm.expect(jsonData.user.id).to.be.a('string');",
+                  "    pm.expect(jsonData.user.email).to.equal(pm.variables.get('test_email'));",
+                  "});",
+                  "",
+                  "// Save teacher_id for later use",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('teacher_id', jsonData.user.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{test_email}}\",\n  \"password\": \"TestPass123!\",\n  \"first_name\": \"Trần\",\n  \"last_name\": \"Hảo\",\n  \"phone\": \"0901234567\",\n  \"school\": \"Trường ABC\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new teacher account"
+          },
+          "response": []
+        },
+        {
+          "name": "1.2 Verify Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Email verified successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.message).to.include('xác thực');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email?token={{verification_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-email"],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{verification_token}}",
+                  "description": "JWT token from email"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1.3 Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains tokens', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.access_token).to.be.a('string');",
+                  "    pm.expect(jsonData.refresh_token).to.be.a('string');",
+                  "    pm.expect(jsonData.expires_in).to.equal(3600);",
+                  "});",
+                  "",
+                  "// Save tokens",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "pm.collectionVariables.set('refresh_token', jsonData.refresh_token);",
+                  "pm.collectionVariables.set('teacher_id', jsonData.user.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{test_email}}\",\n  \"password\": \"TestPass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1.4 Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('New access token received', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.access_token).to.be.a('string');",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1.5 Get My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('User profile returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.user).to.be.an('object');",
+                  "    pm.expect(jsonData.user.email).to.equal(pm.variables.get('test_email'));",
+                  "    pm.expect(jsonData.user.is_verified).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/teachers/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "teachers", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1.6 Update Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Profile updated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.user.school).to.equal('Trường XYZ Updated');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school\": \"Trường XYZ Updated\",\n  \"phone\": \"0909876543\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/teachers/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "teachers", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1.7 Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Logout successful', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Student Management",
+      "item": [
+        {
+          "name": "2.1 Create Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Student created successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.student).to.be.an('object');",
+                  "    pm.expect(jsonData.student.first_name).to.equal('Nguyễn Văn');",
+                  "    pm.expect(jsonData.student.age).to.equal(7);",
+                  "    pm.expect(jsonData.student.status).to.equal('active');",
+                  "});",
+                  "",
+                  "// Save student_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('student_id', jsonData.student.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Nguyễn Văn\",\n  \"last_name\": \"An\",\n  \"nickname\": \"An\",\n  \"date_of_birth\": \"2018-05-15\",\n  \"gender\": \"male\",\n  \"diagnosis\": \"ASD Level 1\",\n  \"notes\": \"Thích màu xanh\",\n  \"parent_name\": \"Nguyễn Thị B\",\n  \"parent_phone\": \"0901234567\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/students",
+              "host": ["{{base_url}}"],
+              "path": ["api", "students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2.2 List Students",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Students list returned with pagination', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.pagination).to.be.an('object');",
+                  "    pm.expect(jsonData.pagination.page).to.equal(1);",
+                  "    pm.expect(jsonData.pagination.limit).to.equal(20);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/students?status=active&page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "students"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2.3 Get Student Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student details returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.student).to.be.an('object');",
+                  "    pm.expect(jsonData.student.id).to.equal(pm.collectionVariables.get('student_id'));",
+                  "    pm.expect(jsonData.stats).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/students/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "students", "{{student_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2.4 Update Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student updated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Updated notes - Trẻ đã tiến bộ rõ rệt\",\n  \"diagnosis\": \"ASD Level 1 - Updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/students/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "students", "{{student_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2.5 Change Student Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student status changed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.student.status).to.equal('paused');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"paused\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/students/{{student_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "students", "{{student_id}}", "status"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Session Management",
+      "item": [
+        {
+          "name": "3.1 Create Session (Step 1 - Basic Info)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Session created - Step 1', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session).to.be.an('object');",
+                  "    pm.expect(jsonData.session.duration_minutes).to.equal(90);",
+                  "    pm.expect(jsonData.session.status).to.equal('pending');",
+                  "    pm.expect(jsonData.next_step).to.equal('add_contents');",
+                  "});",
+                  "",
+                  "// Save session_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('session_id', jsonData.session.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"{{student_id}}\",\n  \"session_date\": \"2025-11-10\",\n  \"time_slot\": \"morning\",\n  \"start_time\": \"09:00:00\",\n  \"end_time\": \"10:30:00\",\n  \"location\": \"Phòng 101\",\n  \"notes\": \"Buổi học về nhận biết màu sắc\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sessions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sessions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.2 Add Content to Session (Step 2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Content added with goals', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.content.goals).to.be.an('array');",
+                  "    pm.expect(jsonData.content.goals.length).to.equal(2);",
+                  "});",
+                  "",
+                  "// Save content_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('content_id', jsonData.content.id);",
+                  "pm.collectionVariables.set('goal_id', jsonData.content.goals[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nhận biết màu sắc cơ bản\",\n  \"domain\": \"cognitive\",\n  \"description\": \"Dạy trẻ nhận biết 4 màu: đỏ, vàng, xanh lá, xanh dương\",\n  \"materials_needed\": \"Thẻ màu, đồ chơi nhiều màu\",\n  \"estimated_duration\": 30,\n  \"goals\": [\n    {\n      \"description\": \"Trẻ có thể chỉ đúng màu khi được hỏi\",\n      \"goal_type\": \"knowledge\",\n      \"is_primary\": true\n    },\n    {\n      \"description\": \"Trẻ có thể nói tên màu\",\n      \"goal_type\": \"skill\",\n      \"is_primary\": false\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sessions/{{session_id}}/contents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sessions", "{{session_id}}", "contents"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.3 Confirm Session (Step 3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Session confirmed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session.contents_count).to.be.greaterThan(0);",
+                  "    pm.expect(jsonData.session.goals_count).to.be.greaterThan(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sessions/{{session_id}}/confirm",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sessions", "{{session_id}}", "confirm"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.4 List Sessions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Sessions list returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.pagination).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sessions?student_id={{student_id}}&status=pending&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sessions"],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "{{student_id}}"
+                },
+                {
+                  "key": "status",
+                  "value": "pending"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3.5 Get Session Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Session details with contents and goals', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session.contents).to.be.an('array');",
+                  "    pm.expect(jsonData.session.contents[0].goals).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sessions/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sessions", "{{session_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Session Logging",
+      "item": [
+        {
+          "name": "4.1 Create Session Log",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Session log created', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session_log.session_id).to.equal(pm.collectionVariables.get('session_id'));",
+                  "    pm.expect(jsonData.next_step).to.equal('evaluate_goals');",
+                  "});",
+                  "",
+                  "// Save log_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('log_id', jsonData.session_log.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sessions/{{session_id}}/logs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sessions", "{{session_id}}", "logs"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.2 Evaluate Goals (Step 1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Goals evaluated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session_log.goal_evaluations).to.be.an('array');",
+                  "    pm.expect(jsonData.next_step).to.equal('attitude');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"evaluations\": [\n    {\n      \"content_goal_id\": \"{{goal_id}}\",\n      \"status\": \"achieved\",\n      \"achievement_level\": 90,\n      \"support_level\": \"minimal_prompt\",\n      \"notes\": \"Trẻ làm tốt, chỉ cần nhắc 1-2 lần\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/session-logs/{{log_id}}/goals",
+              "host": ["{{base_url}}"],
+              "path": ["api", "session-logs", "{{log_id}}", "goals"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.3 Update Attitude (Step 2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Attitude updated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session_log.mood).to.equal('good');",
+                  "    pm.expect(jsonData.next_step).to.equal('notes_media');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mood\": \"good\",\n  \"energy_level\": 4,\n  \"cooperation_level\": 5,\n  \"focus_level\": 3,\n  \"independence_level\": 4,\n  \"attitude_summary\": \"Trẻ rất hợp tác hôm nay\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/session-logs/{{log_id}}/attitude",
+              "host": ["{{base_url}}"],
+              "path": ["api", "session-logs", "{{log_id}}", "attitude"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.4 Update Notes (Step 3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Notes updated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session_log.overall_rating).to.equal(4);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"progress_notes\": \"Trẻ đã tiến bộ rõ rệt trong việc nhận biết màu sắc\",\n  \"challenges_faced\": \"Vẫn còn khó khăn với màu xanh lá và xanh dương\",\n  \"recommendations\": \"Tiếp tục luyện tập phân biệt 2 màu xanh\",\n  \"overall_rating\": 4\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/session-logs/{{log_id}}/notes",
+              "host": ["{{base_url}}"],
+              "path": ["api", "session-logs", "{{log_id}}", "notes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.5 Complete Session Log",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Session log completed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.session.status).to.equal('completed');",
+                  "    pm.expect(jsonData.session.has_evaluation).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/session-logs/{{log_id}}/complete",
+              "host": ["{{base_url}}"],
+              "path": ["api", "session-logs", "{{log_id}}", "complete"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

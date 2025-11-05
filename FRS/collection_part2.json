@@ -1,0 +1,1275 @@
+{
+  "item": [
+    {
+      "name": "5. Behavior System",
+      "item": [
+        {
+          "name": "5.1 List Behavior Groups",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Behavior groups returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.groups).to.be.an('array');",
+                  "    pm.expect(jsonData.groups.length).to.equal(3);",
+                  "});",
+                  "",
+                  "// Save first group_id",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.groups.length > 0) {",
+                  "    pm.collectionVariables.set('behavior_group_id', jsonData.groups[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/behavior-groups",
+              "host": ["{{base_url}}"],
+              "path": ["api", "behavior-groups"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5.2 Search Behaviors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Behaviors search results returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.behaviors).to.be.an('array');",
+                  "    pm.expect(jsonData.total).to.be.a('number');",
+                  "});",
+                  "",
+                  "// Save first behavior_id",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.behaviors.length > 0) {",
+                  "    pm.collectionVariables.set('behavior_id', jsonData.behaviors[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/behaviors?q=ăn vạ&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["api", "behaviors"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "ăn vạ",
+                  "description": "Search query"
+                },
+                {
+                  "key": "group_id",
+                  "value": "{{behavior_group_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "favorites_only",
+                  "value": "false",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5.3 Get Behavior Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Behavior details with full information', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.behavior).to.be.an('object');",
+                  "    pm.expect(jsonData.behavior.name_vn).to.be.a('string');",
+                  "    pm.expect(jsonData.behavior.explanation).to.be.an('array');",
+                  "    pm.expect(jsonData.behavior.solutions).to.be.an('array');",
+                  "    pm.expect(jsonData.behavior.prevention_strategies).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/behaviors/{{behavior_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "behaviors", "{{behavior_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5.4 Add to Favorites",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Behavior added to favorites', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.is_favorite).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"behavior_id\": \"{{behavior_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/teachers/me/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "teachers", "me", "favorites"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5.5 List Favorites",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Favorites list returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.favorites).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/teachers/me/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["api", "teachers", "me", "favorites"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5.6 Create Behavior Incident",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Behavior incident created with A-B-C model', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.incident).to.be.an('object');",
+                  "    pm.expect(jsonData.incident.antecedent).to.be.a('string');",
+                  "    pm.expect(jsonData.incident.behavior_description).to.be.a('string');",
+                  "    pm.expect(jsonData.incident.consequence).to.be.a('string');",
+                  "    pm.expect(jsonData.incident.intensity_level).to.be.within(1, 5);",
+                  "});",
+                  "",
+                  "// Save incident_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('incident_id', jsonData.incident.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session_log_id\": \"{{log_id}}\",\n  \"behavior_library_id\": \"{{behavior_id}}\",\n  \"antecedent\": \"Giáo viên yêu cầu trẻ dọn đồ chơi để chuyển sang hoạt động mới.\",\n  \"behavior_description\": \"Trẻ la hét 'Không!', ném 2-3 đồ chơi xuống sàn, nằm lăn ra đất và gào khóc.\",\n  \"consequence\": \"Giáo viên áp dụng kỹ thuật phớt lờ có kế hoạch, trẻ ngừng khóc sau 3 phút.\",\n  \"duration_minutes\": 5,\n  \"intensity_level\": 3,\n  \"frequency_count\": 1,\n  \"intervention_used\": \"Phớt lờ có kế hoạch (Planned Ignoring)\",\n  \"intervention_effective\": true,\n  \"environmental_factors\": \"Phòng học ồn do nhóm bên cạnh\",\n  \"occurred_at\": \"09:45:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/behavior-incidents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "behavior-incidents"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5.7 Update Behavior Incident",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Incident updated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"intensity_level\": 4,\n  \"notes\": \"Cường độ cao hơn dự kiến\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/behavior-incidents/{{incident_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "behavior-incidents", "{{incident_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5.8 Remove from Favorites",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Behavior removed from favorites', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.is_favorite).to.be.false;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/teachers/me/favorites/{{behavior_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "teachers", "me", "favorites", "{{behavior_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Content Library & Templates",
+      "item": [
+        {
+          "name": "6.1 Create Template",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Template created with default goals', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.template).to.be.an('object');",
+                  "    pm.expect(jsonData.template.default_goals).to.be.an('array');",
+                  "    pm.expect(jsonData.template.is_template).to.be.true;",
+                  "});",
+                  "",
+                  "// Save template_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('template_id', jsonData.template.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Nhận biết màu sắc cơ bản\",\n  \"domain\": \"cognitive\",\n  \"description\": \"Dạy trẻ nhận biết 4 màu: đỏ, vàng, xanh lá, xanh dương\",\n  \"target_age_min\": 3,\n  \"target_age_max\": 6,\n  \"difficulty_level\": \"beginner\",\n  \"materials_needed\": \"Thẻ màu, đồ chơi nhiều màu\",\n  \"estimated_duration\": 30,\n  \"instructions\": \"Bước 1: Giới thiệu màu sắc bằng thẻ màu\\nBước 2: Luyện tập chỉ màu\\nBước 3: Luyện tập nói tên màu\",\n  \"tips\": \"Sử dụng đồ vật quen thuộc với trẻ\",\n  \"default_goals\": [\n    {\n      \"description\": \"Trẻ có thể chỉ đúng màu khi được hỏi\",\n      \"order\": 1\n    },\n    {\n      \"description\": \"Trẻ có thể nói tên màu\",\n      \"order\": 2\n    }\n  ],\n  \"tags\": [\"màu sắc\", \"nhận biết\", \"cognitive\"],\n  \"is_public\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/content-library",
+              "host": ["{{base_url}}"],
+              "path": ["api", "content-library"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6.2 List Templates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Templates list with pagination', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.pagination).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/content-library?domain=cognitive&difficulty=beginner&page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "content-library"],
+              "query": [
+                {
+                  "key": "domain",
+                  "value": "cognitive"
+                },
+                {
+                  "key": "difficulty",
+                  "value": "beginner"
+                },
+                {
+                  "key": "public_only",
+                  "value": "false",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6.3 Get Template Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Template details with full info', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.template).to.be.an('object');",
+                  "    pm.expect(jsonData.template.default_goals).to.be.an('array');",
+                  "    pm.expect(jsonData.template.usage_count).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/content-library/{{template_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "content-library", "{{template_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6.4 Rate Template",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Template rated successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.rating).to.be.an('object');",
+                  "    pm.expect(jsonData.rating.rating).to.equal(5);",
+                  "    pm.expect(jsonData.template_stats).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"review\": \"Template rất hữu ích, trẻ học rất tốt!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/content-library/{{template_id}}/ratings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "content-library", "{{template_id}}", "ratings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6.5 Get Template Ratings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Ratings list returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.ratings).to.be.an('array');",
+                  "    pm.expect(jsonData.stats).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/content-library/{{template_id}}/ratings?page=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "content-library", "{{template_id}}", "ratings"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. AI Processing",
+      "item": [
+        {
+          "name": "7.1 Upload for AI Processing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 202', function () {",
+                  "    pm.response.to.have.status(202);",
+                  "});",
+                  "",
+                  "pm.test('AI processing initiated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.processing).to.be.an('object');",
+                  "    pm.expect(jsonData.processing.processing_status).to.equal('pending');",
+                  "    pm.expect(jsonData.processing.progress).to.equal(0);",
+                  "});",
+                  "",
+                  "// Save processing_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('processing_id', jsonData.processing.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "student_id",
+                  "value": "{{student_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "text_content",
+                  "value": "Buổi học ngày 12/11/2025:\\n- Thời gian: 9:00-10:30\\n- Nội dung: Nhận biết màu sắc\\n- Mục tiêu: Trẻ biết 4 màu cơ bản",
+                  "type": "text",
+                  "description": "Use either file or text_content"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/process",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "process"]
+            },
+            "description": "Upload file or text for AI processing. Can use either 'file' (PDF/DOCX/TXT/JPG/PNG) or 'text_content', not both."
+          },
+          "response": []
+        },
+        {
+          "name": "7.2 Get Processing Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Processing status returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.processing_status).to.be.a('string');",
+                  "    pm.expect(jsonData.progress).to.be.within(0, 100);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/ai/process/{{processing_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "process", "{{processing_id}}", "status"]
+            },
+            "description": "Poll this endpoint to check AI processing progress"
+          },
+          "response": []
+        },
+        {
+          "name": "7.3 Get Processing Result",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Processing completed with result', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.processing.processing_status).to.equal('completed');",
+                  "    pm.expect(jsonData.processing.result_sessions).to.be.an('object');",
+                  "    pm.expect(jsonData.processing.result_sessions.sessions).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/ai/process/{{processing_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "process", "{{processing_id}}"]
+            },
+            "description": "Get AI processing result when status is 'completed'"
+          },
+          "response": []
+        },
+        {
+          "name": "7.4 Create Sessions from AI Result",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Sessions created from AI', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.sessions).to.be.an('array');",
+                  "    pm.expect(jsonData.stats).to.be.an('object');",
+                  "    pm.expect(jsonData.stats.total_sessions).to.be.greaterThan(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessions\": [\n    {\n      \"session_date\": \"2025-11-12\",\n      \"time_slot\": \"morning\",\n      \"start_time\": \"09:00:00\",\n      \"end_time\": \"10:30:00\",\n      \"location\": \"Phòng học số 1\",\n      \"notes\": \"AI generated session\",\n      \"contents\": [\n        {\n          \"title\": \"Nhận biết màu sắc\",\n          \"domain\": \"cognitive\",\n          \"description\": \"Dạy trẻ 4 màu cơ bản\",\n          \"estimated_duration\": 30,\n          \"goals\": [\n            {\n              \"description\": \"Trẻ biết chỉ màu\",\n              \"goal_type\": \"knowledge\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}",
+              "description": "Usually use result_sessions from AI processing result"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ai/process/{{processing_id}}/create-sessions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ai", "process", "{{processing_id}}", "create-sessions"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "8. Analytics & Reports",
+      "item": [
+        {
+          "name": "8.1 Get Analytics Overview",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Analytics data returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.kpis).to.be.an('object');",
+                  "    pm.expect(jsonData.charts).to.be.an('object');",
+                  "    pm.expect(jsonData.top_behaviors).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/overview?date_from=2025-10-06&date_to=2025-11-05",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "overview"],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "{{student_id}}",
+                  "disabled": true,
+                  "description": "Filter by student"
+                },
+                {
+                  "key": "date_from",
+                  "value": "2025-10-06"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2025-11-05"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8.2 Get Student Analytics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student analytics with progress', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.student).to.be.an('object');",
+                  "    pm.expect(jsonData.kpis).to.be.an('object');",
+                  "    pm.expect(jsonData.progress_over_time).to.be.an('object');",
+                  "    pm.expect(jsonData.domain_breakdown).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/student/{{student_id}}?date_from=2025-10-06&date_to=2025-11-05",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "student", "{{student_id}}"],
+              "query": [
+                {
+                  "key": "date_from",
+                  "value": "2025-10-06"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2025-11-05"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8.3 Request Report Generation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 202', function () {",
+                  "    pm.response.to.have.status(202);",
+                  "});",
+                  "",
+                  "pm.test('Report generation initiated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.report_job_id).to.be.a('string');",
+                  "});",
+                  "",
+                  "// Save report_job_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('report_job_id', jsonData.report_job_id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"format\": \"pdf\",\n  \"report_type\": \"individual\",\n  \"student_id\": \"{{student_id}}\",\n  \"date_from\": \"2025-10-06\",\n  \"date_to\": \"2025-11-05\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8.4 Check Report Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Report status or file URL', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.report).to.be.an('object');",
+                  "    if (jsonData.report.status === 'completed') {",
+                  "        pm.expect(jsonData.report.file_url).to.be.a('string');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/{{report_job_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "{{report_job_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8.5 Download Report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 302 (redirect)', function () {",
+                  "    pm.response.to.have.status(302);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reports/{{report_job_id}}/download",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports", "{{report_job_id}}", "download"]
+            },
+            "description": "Redirects to R2 signed URL for download"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "9. Settings & Sync",
+      "item": [
+        {
+          "name": "9.1 Get Settings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Settings returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.user).to.be.an('object');",
+                  "    pm.expect(jsonData.settings).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/settings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "settings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9.2 Update Settings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Settings updated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"theme\": \"dark\",\n  \"font_size\": \"medium\",\n  \"push_notifications\": true,\n  \"email_notifications\": false,\n  \"timezone\": \"Asia/Ho_Chi_Minh\",\n  \"language\": \"vi\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/settings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "settings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9.3 Get Sync Metadata",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Sync metadata returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.data_versions).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sync/metadata",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sync", "metadata"]
+            },
+            "description": "Get sync metadata for offline cache"
+          },
+          "response": []
+        },
+        {
+          "name": "9.4 Create Backup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 202', function () {",
+                  "    pm.response.to.have.status(202);",
+                  "});",
+                  "",
+                  "pm.test('Backup job initiated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.backup_job_id).to.be.a('string');",
+                  "});",
+                  "",
+                  "// Save backup_job_id",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('backup_job_id', jsonData.backup_job_id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"backup_type\": \"manual\",\n  \"include_media\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/backups",
+              "host": ["{{base_url}}"],
+              "path": ["api", "backups"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9.5 List Backups",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Backups list returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.backups).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/backups",
+              "host": ["{{base_url}}"],
+              "path": ["api", "backups"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9.6 Download Backup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 302 (redirect)', function () {",
+                  "    pm.response.to.have.status(302);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/backups/{{backup_job_id}}/download",
+              "host": ["{{base_url}}"],
+              "path": ["api", "backups", "{{backup_job_id}}", "download"]
+            },
+            "description": "Redirects to R2 signed URL for backup download"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10. Cleanup & Destructive Operations",
+      "item": [
+        {
+          "name": "10.1 Delete Behavior Incident",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/behavior-incidents/{{incident_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "behavior-incidents", "{{incident_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10.2 Delete Template",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/content-library/{{template_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "content-library", "{{template_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10.3 Delete Session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/sessions/{{session_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sessions", "{{session_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10.4 Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/students/{{student_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "students", "{{student_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10.5 Delete Account (DANGER)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 202', function () {",
+                  "    pm.response.to.have.status(202);",
+                  "});",
+                  "",
+                  "pm.test('Account deletion initiated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    pm.expect(jsonData.logout).to.be.true;",
+                  "});",
+                  "",
+                  "// Clear all tokens",
+                  "pm.collectionVariables.set('access_token', '');",
+                  "pm.collectionVariables.set('refresh_token', '');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"TestPass123!\",\n  \"confirmation\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/account",
+              "host": ["{{base_url}}"],
+              "path": ["api", "account"]
+            },
+            "description": "⚠️ DANGER: This will permanently delete all data"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-set test_email if not exists",
+          "if (!pm.collectionVariables.get('test_email')) {",
+          "    const timestamp = Date.now();",
+          "    pm.collectionVariables.set('test_email', `test_${timestamp}@educare.test`);",
+          "}"
+        ]
+      }
+    }
+  ]
+}
