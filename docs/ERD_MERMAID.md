@@ -212,19 +212,21 @@ erDiagram
         varchar name_en "Tantrums"
         json keywords_vn "10-15 keywords - backend search only"
         json keywords_en
+        tsvector keywords_tsvector "computed from keywords_vn for full-text search"
         text manifestation_vn "clinical description"
         text manifestation_en
         int age_range_min
         int age_range_max
         json severity_indicators
-        json explanation "array of frameworks - 2-4 items"
-        json solutions "array of interventions - 4-5 items"
+        json explanation "array of {title, description} - 2-4 items"
+        json solutions "array of {title, description} - 4-5 items"
         json prevention_strategies
-        json sources "academic citations - 2+ items"
+        json sources "array of strings - academic citations - 2+ items"
         json related_behaviors "array of behavior IDs"
         varchar icon "emoji"
         boolean is_active
         int usage_count "auto-increment"
+        int search_rank "computed ranking score"
         timestamp last_used_at
         timestamp created_at
         timestamp updated_at
