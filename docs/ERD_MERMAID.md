@@ -1,46 +1,7 @@
-Tôi sẽ kiểm tra ERD với API đã thiết kế và phát hiện một số điểm cần điều chỉnh:
 
-## 🔍 PHÂN TÍCH SO SÁNH ERD vs API
-
-### ✅ ĐÚNG - Không cần sửa:
-
-1. **TEACHERS** - OK
-2. **STUDENTS** - OK
-3. **SESSIONS** - OK
-4. **SESSION_CONTENTS** - OK
-5. **BEHAVIOR_GROUPS** - OK
-6. **BEHAVIOR_LIBRARY** - OK
-7. **BEHAVIOR_INCIDENTS** - OK
-8. **TEACHER_FAVORITES** - OK
-9. **CONTENT_LIBRARY** - OK
-10. **AI_PROCESSING** - OK
-
-### ❌ CẦN SỬA:
-
-1. **SESSION_CONTENT_GOALS** - Tên bảng sai
-2. **SESSION_LOGS** - Thiếu vài trường
-3. **GOAL_EVALUATIONS** - Thiếu relationship
-4. **MEDIA_ATTACHMENTS** - Tên bảng sai
-5. **TEMPLATE_RATINGS** - Tên bảng sai
-6. **REPORTS** - Thiếu bảng này
-7. **BACKUPS** - Tên bảng sai
-
----
-
-# 📋 ERD_MERMAID.md - PHIÊN BẢN SỬA LẠI
-
-```markdown
-# Sơ đồ ERD - Educare Connect (Mermaid Format)
-
-Sơ đồ quan hệ cơ sở dữ liệu sử dụng Mermaid để có thể render trực tiếp trên GitHub, VSCode, hoặc các công cụ hỗ trợ Mermaid.
-
-**Last Updated:** 2025-11-05  
-**Version:** 2.0 - Aligned with API Design
-
----
 
 ## 📊 SƠ ĐỒ ERD HOÀN CHỈNH
-
+---
 ```mermaid
 erDiagram
     %% ========================================
@@ -397,7 +358,7 @@ erDiagram
     }
 ```
 
----
+
 
 ## 🔗 MỐI QUAN HỆ CHI TIẾT
 
